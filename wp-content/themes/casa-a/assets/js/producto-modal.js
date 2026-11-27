@@ -41,8 +41,9 @@
 
 	function pintarCantidad() {
 		$('[data-modal-cantidad]').value = cantidad;
-		$('[data-modal-menos]').disabled = cantidad <= 1;
-		$('[data-modal-mas]').disabled = cantidad >= maximo();
+		var libre = estaDisponible();
+		$('[data-modal-menos]').disabled = !libre || cantidad <= 1;
+		$('[data-modal-mas]').disabled = !libre || cantidad >= maximo();
 	}
 
 	function llenar(datos) {
@@ -52,7 +53,9 @@
 		$('[data-modal-etiqueta]').textContent = (datos.categorias.join(' · ') || 'Catálogo') + ' · ' + datos.codigo;
 		$('[data-modal-titulo]').textContent = datos.nombre;
 		$('[data-modal-atributos]').textContent = datos.atributos.join(' · ');
+		$('[data-modal-descripcion]').textContent = datos.descripcion || '—';
 		$('[data-modal-medidas]').textContent = datos.medidas || '—';
+		$('[data-modal-nodisp-foto]').hidden = estaDisponible();
 		$('[data-modal-precio]').textContent = datos.precio !== null ? '$' + formato(datos.precio) + ' / día' : '—';
 		$('[data-modal-stock]').textContent = datos.stock !== null ? datos.stock + ' unidades' : '—';
 
@@ -84,13 +87,15 @@
 			mostrarPrincipal(0);
 		}
 
-		var agregar = $('[data-modal-agregar]');
-		var disponible = datos.stock === null || datos.stock > 0;
-		agregar.disabled = !disponible;
-		agregar.textContent = disponible ? 'Agregar a mi reserva' : 'Sin stock';
-
+		var disponible = estaDisponible();
+		$('[data-modal-agregar]').disabled = !disponible;
+		$('[data-modal-consulta]').hidden = disponible;
 		$('[data-modal-aviso]').hidden = true;
 		pintarCantidad();
+	}
+
+	function estaDisponible() {
+		return !!producto && producto.disponible !== false && (producto.stock === null || producto.stock > 0);
 	}
 
 	function abrir(datos, origen) {
@@ -130,6 +135,10 @@
 
 	function agregarAlCarrito() {
 		if (!window.casaASeleccion || !producto) {
+			return;
+		}
+
+		if (!estaDisponible()) {
 			return;
 		}
 

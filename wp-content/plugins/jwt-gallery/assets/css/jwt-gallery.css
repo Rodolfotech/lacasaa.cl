@@ -1182,8 +1182,10 @@ body.jg-blank-page {
 }
 
 /* Casilla de "No disponible" en el formulario de edición */
-.jg-checkbox-label {
+/* ".jg-form .jg-checkbox-label" para ganarle a ".jg-form label" (flex-direction: column). */
+.jg-form .jg-checkbox-label {
 	display: flex;
+	flex-direction: row;
 	align-items: center;
 	gap: 8px;
 	cursor: pointer;

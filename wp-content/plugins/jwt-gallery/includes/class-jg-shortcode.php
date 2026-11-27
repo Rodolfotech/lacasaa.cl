@@ -117,7 +117,7 @@ class JG_Shortcode {
 							</label>
 							<label>
 								<span class="jg-label-row">Descripción <span data-jg-hint="description"></span></span>
-								<textarea name="description" maxlength="<?php echo (int) JG_REST::MAX_DESCRIPTION_CHARS; ?>" rows="3" placeholder="Breve descripción de la pieza…"></textarea>
+								<textarea name="description" rows="3" placeholder="Breve descripción de la pieza…"></textarea>
 								</label>
 								<label>
 									<span class="jg-label-row">Precio por día (CLP)</span>

@@ -1,7 +1,7 @@
 /*
 Theme Name: CASA A
 Description: Theme visual para CASA A, espacio boutique multifuncional y hub creativo.
-Version: 1.4.61
+Version: 1.4.63
 Requires at least: 6.0
 Requires PHP: 7.3
 Text Domain: casa-a
@@ -5288,4 +5288,69 @@ body.home .casa-a-header.is-forzado .casa-a-menu-toggle span {
 	text-transform: uppercase;
 	font-size: 0.72rem;
 	letter-spacing: 0.16em;
+}
+
+/* Modal de producto: texto de consulta debajo del botón cuando la pieza no está disponible */
+.casa-a-modal-consulta {
+	margin: 12px 0 0;
+	font-family: "Cascadia Code", ui-monospace, monospace;
+	font-size: 0.8rem;
+	color: var(--casa-a-taupe);
+}
+
+.casa-a-modal-consulta[hidden] {
+	display: none;
+}
+
+.casa-a-modal-consulta a {
+	color: var(--casa-a-negro);
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+/* Modal de producto: etiqueta "No disponible" sobre la foto principal (misma que en la tarjeta) */
+.casa-a-modal-principal {
+	position: relative;
+}
+
+.casa-a-modal-principal [data-modal-nodisp-foto][hidden] {
+	display: none;
+}
+
+/* Modal de producto: la descripción va debajo de su título y el texto se ajusta al ancho del modal */
+.casa-a-modal-datos > .casa-a-modal-descripcion {
+	flex-direction: column;
+	gap: 6px;
+}
+
+.casa-a-modal-datos > .casa-a-modal-descripcion dd {
+	min-width: 0;
+	text-align: left;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+/* Modal de producto: el botón ocupa el ancho disponible y el texto de consulta va debajo */
+.casa-a-modal-accion {
+	flex-wrap: wrap;
+}
+
+.casa-a-modal-accion .casa-a-boton-enviar {
+	flex: 1 1 auto;
+	white-space: nowrap;
+}
+
+.casa-a-modal-accion .casa-a-modal-consulta {
+	flex-basis: 100%;
+	margin: 10px 0 0;
+}
+
+/* Modal de producto: la descripción ocupa como máximo dos líneas (la fuente va un poco más chica) */
+.casa-a-modal-datos > .casa-a-modal-descripcion dd {
+	font-size: 0.8rem;
+	line-height: 1.5;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
 }

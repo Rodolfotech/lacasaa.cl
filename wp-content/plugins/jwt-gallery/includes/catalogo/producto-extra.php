@@ -124,9 +124,11 @@ function casa_a_producto_datos_modal( $post_id ) {
 		'codigo'      => $codigo ? $codigo : 'CA-' . str_pad( (string) $post_id, 4, '0', STR_PAD_LEFT ),
 		'categorias'  => $nombres( 'categoria_producto' ),
 		'atributos'   => array_merge( $nombres( 'estilo_producto' ), $nombres( 'material_producto' ), $nombres( 'color_producto' ) ),
+		'descripcion' => trim( wp_strip_all_tags( (string) get_post_field( 'post_content', $post_id ) ) ),
 		'medidas'     => get_post_meta( $post_id, 'casa_a_dimensiones', true ),
 		'precio'      => '' === (string) $precio ? null : (int) $precio,
 		'stock'       => '' === (string) $stock ? null : (int) $stock,
+		'disponible'  => '0' !== get_post_meta( $post_id, 'casa_a_disponible', true ),
 		'imagenes'    => $imagenes,
 		'url'         => get_permalink( $post_id ),
 	);

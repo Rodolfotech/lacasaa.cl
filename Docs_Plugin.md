@@ -97,7 +97,7 @@ Estos cambios se hicieron en esta copia y no existen en el original de todoacril
 
 Plugin de WordPress que permite iniciar sesión mediante JWT (correo + contraseña) y gestionar una galería de imágenes organizada por categorías: subir, editar, eliminar y categorizar imágenes desde un panel autenticado, con una galería pública de solo lectura.
 
-- **Versión:** 2.0.3 (2026-11-06; ver §12.54–§12.55). Producción: 2.0.1 hasta que se suba.
+- **Versión:** 2.1.5 (2026-11-27; ver §14). Producción: pendiente de subir `jwt-gallery-2.1.5.zip`.
 - **Namespace REST:** `jwt-gallery/v1`
 - **Requiere:** PHP 7.2.24+, WordPress con usuarios ya existentes (usa la tabla `wp_users`)
 - **Ubicación:** `wp-content/plugins/jwt-gallery/`
@@ -116,7 +116,7 @@ Plugin de WordPress que permite iniciar sesión mediante JWT (correo + contrase�
 | Seguridad | ✅ **Fixes #1-12 aplicados** (2026-10-20): credenciales BD, revocación jti, etc. |
 | Revocación de tokens | ✅ **Activa** (Fix #6): tokens se revocan al logout, sesiones antiguas se invalidan |
 | Producción | `https://todoacrilico.cl/wp/galeria/` y `/wp/galeria-panel/`. Cuentas: ver README.md (local) y §12.45 |
-| Límites | Título 43, Descripción 120, Uso 43 y Medidas 20 caracteres; de 1 a 10 imágenes de hasta 8 MB (jpg, jpeg, png, gif, webp y avif). Constantes de `JG_REST`, enviadas al panel como `JGGallery.limits` |
+| Límites | Título 43, Descripción 82 caracteres **sin contar espacios**, Uso 43 y Medidas 40 caracteres; de 1 a 10 imágenes de hasta 8 MB (jpg, jpeg, png, gif, webp y avif). Constantes de `JG_REST`, enviadas al panel como `JGGallery.limits` |
 | Banner de cookies / analítica | **No** se cargan en `/galeria/` ni en `/galeria-panel/` (decisión del tema, `ta_is_private_page()`) |
 | Cuenta para pruebas | `prueba.panel.*@todoacrilico.cl` (por ejemplo, ID 4). **Nunca** `admin@todoacrilico.cl` (ID 3): emitir un token para esa cuenta cierra la sesión real del cliente |
 | Pendiente | — |
@@ -1101,7 +1101,7 @@ document.addEventListener('DOMContentLoaded', function () {
 - `initCategoryManager()`: engancha el formulario "Nueva categoría" del sidebar (`POST /categories`).
 - `renderCategoryManagerList()`: por cada categoría arma una fila con nombre + contador y dos botones de ícono — un lápiz que la convierte en un `<input>` editable + botón "Guardar" (`PUT /categories/{id}`), y un tacho de basura que pide confirmación (el mensaje avisa cuántas **piezas se eliminarán** junto con la categoría y sus archivos, desde 1.4.1) y hace `DELETE /categories/{id}`; tras eliminarla refresca la grilla porque también desaparecen las piezas. Ambos íconos se ocultan mientras la fila está en modo edición.
 - `renderCategoryTabs()`: arma la barra de tabs por categoría en el área de contenido — `Todas` (con `state.allTotal`), cada categoría (con su `count`) y `Sin categoría` al final **solo** si `allTotal` menos la suma de los `count` de las categorías es mayor que cero. Al hacer clic en un tab, resetea `state.page = 1` y llama a `loadImages()`.
-- `initUploadForm()`: monta el **selectordor de archivos** `buildImagePicker()` (§1.6.3) en `[data-jg-upload-images-mount]`, y al enviar arma `FormData` con `title`, `description`, `usage`, `measurements`, `category_id` y los `$_FILES` (título máx. 43, descripción máx. 120, uso máx. 43 — ver §12.34). Sube la publicación (`POST /images`); al terminar resetea el picker desde cero y refresca categorías **e** imágenes (`refreshAfterMutation`), porque subir una imagen puede cambiar los contadores de la barra de tabs.
+- `initUploadForm()`: monta el **selectordor de archivos** `buildImagePicker()` (§1.6.3) en `[data-jg-upload-images-mount]`, y al enviar arma `FormData` con `title`, `description`, `usage`, `measurements`, `category_id` y los `$_FILES` (título máx. 43, descripción máx. 82 sin contar espacios, uso máx. 43 — ver §12.34). Sube la publicación (`POST /images`); al terminar resetea el picker desde cero y refresca categorías **e** imágenes (`refreshAfterMutation`), porque subir una imagen puede cambiar los contadores de la barra de tabs.
 - `loadImages()`: trae `GET /images` **ya paginado y filtrado por categoría en el servidor** (`?page=N&per_page=9&category_id=...`), guarda `items`/`total` en `state`, pinta la grilla (`renderImagesGrid`) y la paginación (`renderPaginationControl`, §1.6.1). A diferencia de la versión anterior, cambiar de página o de categoría **sí** vuelve a pedirle datos al servidor — no hay caché completa en el cliente.
 - `buildImageCard()`: arma cada tarjeta con `createElement`/`textContent` (nunca `innerHTML` para datos de usuario). Si `item.images` tiene más de una URL, agrega un mini-carrusel (flechas ‹/› + contador "2/4", ver §1.6.4) — si tiene solo una, muestra la imagen sola, sin controles. La tarjeta muestra categoría (badge) y las líneas "Medidas:" y "Uso:" si existen. Si `item.author_id` coincide con el usuario de la sesión actual, agrega dos botones de ícono superpuestos en la esquina de la imagen — un lápiz (Editar) y un tacho de basura rojo (Eliminar) — si no, la tarjeta es de solo lectura, sin esos íconos.
 - `buildEditForm()`: el formulario de edición inline (título, descripción, uso, medidas, categoría, y el **selector de imágenes precargado con `item.images`**) que reemplaza la vista de la tarjeta al hacer clic en el ícono de lápiz; al guardar hace la edición (`POST /images/{id}` con `X-HTTP-Method-Override: PUT`, §12.32) con los archivos modificados y llama a `refreshAfterMutation()`.
@@ -4292,7 +4292,7 @@ Si entras a esta URL **sin** haber iniciado sesión (por ejemplo, en una ventana
 En el formulario "Subir imagen" del sidebar:
 
 - **Título:** `Ventana instalada` (máx. 43 caracteres).
-- **Descripción:** `Reparación de vidrio templado` (máx. 120 caracteres).
+- **Descripción:** `Reparación de vidrio templado` (máx. 82 caracteres sin contar espacios).
 - **Uso:** `Exhibición en vitrinas o uso en exterior` (máx. 43 caracteres).
 - **Medidas:** por ejemplo `1500 x 2000 mm`.
 - **Imágenes:** clic en **"+ Agregar otra imagen"** abre el selector de archivos del dispositivo (se pueden elegir varias de una vez, hasta completar 10, y 8 MB por archivo). Cada una aparece como una mini-tarjeta con vista previa; el contador muestra "2/10 imágenes". El botón `×` de cada tarjeta la quita, salvo que sea la única.
@@ -4328,7 +4328,7 @@ Clic en **Cerrar sesión** (barra superior) → se borra la sesión local y el n
 - Editar o eliminar una imagen que no es tuya: no debería aparecer la opción, porque el frontend solo muestra los botones si `author_id` coincide con tu usuario — y aunque se forzara la llamada a la API directamente, el servidor la rechaza con `jg_forbidden` (403).
 - Crear una categoría con un nombre que ya existe → error "Ya existe una categoría con ese nombre" (`jg_category_exists`, 409).
 - Subir un archivo con extensión no permitida o de más de 8 MB → `jg_bad_extension` / `jg_file_too_large` (400); el archivo no se guarda.
-- Escribir un título de más de 43 caracteres, una descripción de más de 120 o un uso de más de 43 → el formulario lo bloquea con `maxlength`, y si se fuerza vía API el servidor responde `jg_title_too_long` / `jg_description_too_long` / `jg_usage_too_long` (400).
+- Escribir un título de más de 43 caracteres, una descripción de más de 82 caracteres sin espacios o un uso de más de 43 → el formulario lo bloquea con `maxlength`, y si se fuerza vía API el servidor responde `jg_title_too_long` / `jg_description_too_long` / `jg_usage_too_long` (400).
 - Iniciar sesión con contraseña incorrecta 6 veces seguidas → "demasiados intentos" al sexto. El bloqueo dura 5 minutos y cuenta **por cuenta**: es 5 intentos por correo y 25 por IP real (ver §12.37).
 - En "Subir imagen", seleccionar más archivos (hasta 10 en total) → el botón de agregar desaparece y el contador marca "10/10 imágenes"; no hay forma de agregar un onceavo desde la interfaz. Si se fuerza el envío con más de 10 archivos directo a la API, el servidor lo rechaza con `jg_too_many_images` (400).
 - Dejar todos los campos de imagen vacíos y enviar el formulario → el frontend lo bloquea antes de llamar a la API; si se fuerza vía API sin archivos, el servidor responde `jg_no_image_url` (400).
@@ -4382,7 +4382,7 @@ Clic en **Cerrar sesión** (barra superior) → se borra la sesión local y el n
 
 ---
 
-## 14. Estado actual de `jwt-gallery` en lacasaa.cl (versión 2.1.3, 2026-11-27)
+## 14. Estado actual de `jwt-gallery` en lacasaa.cl (versión 2.1.5, 2026-11-27)
 
 Esta sección resume lo que hace el plugin hoy en lacasaa.cl. Las secciones anteriores describen el plugin original (proyecto3).
 
@@ -4403,7 +4403,7 @@ Esta sección resume lo que hace el plugin hoy en lacasaa.cl. Las secciones ante
 
 ### Piezas
 
-- **Campos:** título, descripción, precio por día (CLP), cantidad, medidas, categoría principal y subcategoría, casilla "No disponible" y de 1 a 3 imágenes.
+- **Campos:** título, descripción (máx. 82 caracteres sin contar espacios), precio por día (CLP), cantidad, medidas (máx. 40 caracteres), categoría principal y subcategoría, casilla "No disponible" (con su popover "i" en la misma línea) y de 1 a 3 imágenes.
 - **Publicar:** la categoría principal es obligatoria; la subcategoría depende de la principal. Si la principal no tiene subcategorías, la pieza queda en la principal. Bajo los selectores aparece la ruta y el número de piezas.
 - **Editar:** cambiar datos, quitar imágenes (×), subir nuevas y **reordenar arrastrando** las miniaturas. La primera imagen es la principal. Las imágenes se guardan en el orden de la pantalla y las nuevas van al final.
 - **Límite:** `JG_REST::MAX_IMAGES_PER_POST = 3`. El servidor rechaza más de 3 archivos al crear o editar.
@@ -4425,4 +4425,14 @@ Esta sección resume lo que hace el plugin hoy en lacasaa.cl. Las secciones ante
 - **Nombres de categoría:** principales en MAYÚSCULAS; subcategorías con la primera letra en mayúscula y el resto en minúscula (`categoria_formato()` en `class-jg-rest.php`). El campo de categoría principal muestra mayúsculas mientras se escribe (CSS).
 - **Espejo:** la copia en el catálogo se busca por nombre dentro del mismo padre. `casa_a_categorias_del_plugin()` solo devuelve copias cuya categoría del panel existe, así que una categoría borrada desaparece del theme.
 - **Sincronización de productos:** se quitó un bloque de stock repetido en `sync-galeria.php`.
-- **Versiones:** 2.1.0 (catálogo integrado), 2.1.1 y 2.1.2 (correcciones del espejo y de categorías borradas), 2.1.3 (formato de nombres).
+- **Versiones:** 2.1.0 (catálogo integrado), 2.1.1 y 2.1.2 (correcciones del espejo y de categorías borradas), 2.1.3 (formato de nombres), 2.1.4 y 2.1.5 (ver abajo).
+
+### Cambios de las versiones 2.1.4 y 2.1.5 (2026-11-27)
+
+- **Descripción de 82 caracteres sin contar espacios:** `JG_REST::MAX_DESCRIPTION_CHARS` = 82. `description_length()` quita espacios y saltos de línea antes de contar. Se quitó el `maxlength` del textarea, porque el navegador cuenta los espacios; el límite lo aplica el servidor.
+- **Al editar, el límite solo se valida si la descripción cambió:** una pieza guardada con un texto más largo se puede seguir editando (por ejemplo, para marcarla "No disponible"). Al crear, el límite siempre se aplica.
+- **Medidas:** límite de 40 caracteres (antes 20), en `MAX_MEASUREMENTS_CHARS`.
+- **Casilla "No disponible":** el check, el texto y el popover "i" van en una sola línea. Antes `.jg-form label` (flex en columna) ganaba a `.jg-checkbox-label`; ahora el selector es `.jg-form .jg-checkbox-label`. El popover usa `labelWithHint()` con la entrada `no_disponible` de `HINTS`.
+- **Subida con la conexión cortada:** si la conexión se pierde al publicar, el mensaje dice que la pieza podría haberse guardado y la galería se recarga. Antes decía "Error de red" y reactivaba el botón, lo que llevaba a publicar dos veces.
+- **Datos del modal de producto** (`includes/catalogo/producto-extra.php`, `casa_a_producto_datos_modal()`): ahora incluye `disponible` (de `casa_a_disponible`) y `descripcion` (contenido del producto sin HTML). El tema los usa en el modal de la galería.
+- **Versiones:** 2.1.4 (límites, popovers, datos del modal), 2.1.5 (descripción de 82 sin espacios, validación solo al cambiar la descripción, CSS de la casilla).
