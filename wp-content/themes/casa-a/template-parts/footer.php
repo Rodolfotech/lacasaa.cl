@@ -63,7 +63,7 @@ $casa_a_wa_href  = $casa_a_datos['whatsapp'] ? 'https://wa.me/' . preg_replace( 
 			<h3 class="casa-a-footer-titulo"><?php esc_html_e( 'Ayuda', 'casa-a' ); ?></h3>
 			<ul class="casa-a-footer-lista">
 				<li><a href="<?php echo esc_url( home_url( '/como-arrendar/' ) ); ?>"><?php esc_html_e( 'Cómo arrendar', 'casa-a' ); ?></a></li>
-				<li><a href="<?php echo esc_url( home_url( '/como-arrendar/#politicas' ) ); ?>"><?php esc_html_e( 'Condiciones de arriendo', 'casa-a' ); ?></a></li>
+				<li><a href="<?php echo esc_url( home_url( '/condiciones-de-arriendo/' ) ); ?>"><?php esc_html_e( 'Condiciones de arriendo', 'casa-a' ); ?></a></li>
 				<li><a href="<?php echo esc_url( home_url( '/contacto/' ) ); ?>"><?php esc_html_e( 'Contacto', 'casa-a' ); ?></a></li>
 				<li>
 					<a class="casa-a-footer-instagram" href="<?php echo esc_url( $casa_a_datos['instagram_url'] ); ?>" target="_blank" rel="noopener">

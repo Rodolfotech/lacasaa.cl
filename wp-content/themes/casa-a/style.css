@@ -1,7 +1,7 @@
 /*
 Theme Name: CASA A
 Description: Theme visual para CASA A, espacio boutique multifuncional y hub creativo.
-Version: 1.4.53
+Version: 1.4.61
 Requires at least: 6.0
 Requires PHP: 7.3
 Text Domain: casa-a
@@ -358,6 +358,21 @@ a {
 	text-transform: uppercase;
 	font-size: 0.85rem;
 	letter-spacing: 0.1em;
+}
+
+/* Pie siempre al final de la página: el cuerpo ocupa al menos toda la altura de la ventana. */
+body {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+body > main {
+	flex: 1 0 auto;
+}
+
+body > .casa-a-footer {
+	margin-top: auto;
 }
 
 /* Contenido */
@@ -5213,4 +5228,64 @@ body.home .casa-a-header.is-forzado .casa-a-menu-toggle span {
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 8px;
+}
+
+/* Acordeón de condiciones de arriendo (template-condiciones.php): recuperado y adaptado a Cascadia Code. */
+.casa-a-politicas {
+	margin-top: 56px;
+}
+
+.casa-a-politicas-titulo {
+	font-family: "Cascadia Code", ui-monospace, monospace;
+	font-size: 1.8rem;
+	font-weight: 500;
+	color: var(--casa-a-negro);
+	margin: 0 0 16px;
+}
+
+.casa-a-politica {
+	border-bottom: 1px solid var(--casa-a-gris-claro);
+}
+
+.casa-a-politica summary {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 18px 0;
+	cursor: pointer;
+	font-family: "Cascadia Code", ui-monospace, monospace;
+	font-size: 1.05rem;
+	color: var(--casa-a-negro);
+	list-style: none;
+}
+
+.casa-a-politica summary::-webkit-details-marker {
+	display: none;
+}
+
+.casa-a-politica summary::after {
+	content: "+";
+	font-family: "Cascadia Code", ui-monospace, monospace;
+	color: var(--casa-a-taupe);
+}
+
+.casa-a-politica[open] summary::after {
+	content: "−";
+}
+
+.casa-a-politica p {
+	margin: 0 0 18px;
+	font-family: "Cascadia Code", ui-monospace, monospace;
+	font-size: 0.85rem;
+	color: var(--casa-a-negro);
+	line-height: 1.6;
+}
+
+/* Etiqueta superior de la página (texto secundario, como la navegación). */
+.casa-a-etiqueta {
+	margin: 0 0 8px;
+	color: var(--casa-a-muted);
+	text-transform: uppercase;
+	font-size: 0.72rem;
+	letter-spacing: 0.16em;
 }
