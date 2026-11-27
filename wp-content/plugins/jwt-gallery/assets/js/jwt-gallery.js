@@ -12,9 +12,9 @@
 	// valores de respaldo solo se usan si el objeto no llegó.
 	var LIMITS = (window.JGGallery && window.JGGallery.limits) || {
 		title: 43,
-		description: 120,
+		description: 82,
 		usage: 43,
-		measurements: 20,
+		measurements: 40,
 		images: 10,
 		imageMb: 8,
 		formats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'],
@@ -1196,8 +1196,17 @@
 					});
 				})
 				.catch(function () {
+					// La conexión se cortó después de enviar: el servidor pudo
+					// guardar la pieza igual. Se refresca la galería para que el
+					// usuario la vea antes de decidir si vuelve a publicar.
+					showMessage(
+						errorEl,
+						'Se perdió la conexión al publicar. La pieza podría haberse guardado: revisa la galería antes de volver a publicarla.'
+					);
+					loadCategories(root, state).then(function () {
+						loadImages(root, state);
+					});
 					submitBtn.disabled = false;
-					showMessage(errorEl, 'Error de red. Intenta nuevamente.');
 				});
 		});
 	}
@@ -1456,7 +1465,6 @@
 		var descLabel = document.createElement('label');
 		labelWithHint(descLabel, 'Descripción', 'description', state);
 		var descInput = document.createElement('textarea');
-		descInput.maxLength = LIMITS.description;
 		descInput.rows = 3;
 		descInput.value = item.description || '';
 		descLabel.appendChild(descInput);
@@ -1540,7 +1548,7 @@
 		noDisponibleInput.type = 'checkbox';
 		noDisponibleInput.checked = !!item.no_disponible;
 		disponibleLabel.appendChild(noDisponibleInput);
-		disponibleLabel.appendChild(document.createTextNode(' No disponible (la pieza no se puede arrendar)'));
+		labelWithHint(disponibleLabel, 'No disponible', 'no_disponible', state);
 		form.appendChild(disponibleLabel);
 		form.appendChild(measurementsLabel);
 		form.appendChild(imagesLabel);
@@ -1633,10 +1641,18 @@
 			return charsHint('Título', LIMITS.title, true);
 		},
 		description: function () {
-			return charsHint('Descripción', LIMITS.description, false);
+			var hint = charsHint('Descripción', LIMITS.description, false);
+			hint.lines[1] = 'Máximo ' + LIMITS.description + ' caracteres, sin contar espacios.';
+			return hint;
 		},
 		measurements: function () {
 			return charsHint('Medidas', LIMITS.measurements, false);
+		},
+		no_disponible: function () {
+			return {
+				title: 'No disponible',
+				lines: ['La pieza no se puede arrendar.'],
+			};
 		},
 		images: function () {
 			var formats = (LIMITS.formats || []).map(function (f) {

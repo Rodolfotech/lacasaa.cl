@@ -13,7 +13,7 @@ Requisitos principales:
 
 ## Estado actual
 
-### Theme `casa-a` (versión 1.4.61)
+### Theme `casa-a` (versión 1.4.63)
 
 Ruta: `wp-content/themes/casa-a/`. Activo.
 
@@ -50,7 +50,7 @@ Ruta: `wp-content/themes/casa-a/`. Activo.
 - **Filtro lateral:** muestra todas las categorías creadas en el plugin, agrupadas por principal. Si una principal no tiene subcategorías, aparece una sola vez como filtro, sin repetirse debajo. Cada principal tiene un botón + / − para desplegar sus subcategorías, una debajo de otra. Si una subcategoría activa está en el filtro, su grupo se abre al cargar. Sin texto "Arriendo", "Catálogo", "Solo disponibles" ni "Limpiar filtros".
 - **Listado:** agrupado por categoría principal y subcategoría, con título en negrita y subtítulo en gris. Cada subcategoría muestra **6 productos por página** con paginación (reutiliza `paginacion.js`).
 - **Tarjetas:** foto (abre el modal), código, nombre y precio por día. Si no está disponible, etiqueta "No disponible".
-- **Modal de producto:** galería con miniaturas, medidas, valor de arriendo, unidades disponibles, cantidad y "Agregar a mi reserva". Al agregar muestra "Agregado a tu reserva." con "Ir a Mi reserva →" a la derecha, en la misma fila.
+- **Modal de producto:** galería con miniaturas, descripción (debajo de su título, máximo dos líneas), medidas, valor de arriendo, unidades disponibles, cantidad y "Agregar a mi reserva". Al agregar muestra "Agregado a tu reserva." con "Ir a Mi reserva →" a la derecha, en la misma fila. Si la pieza no está disponible, la foto muestra la etiqueta "No disponible", el botón queda deshabilitado (y los botones de cantidad también) y debajo aparece: "Si quieres consultar por este producto, contáctanos." (enlace a `/contacto/`). Lo controla `assets/js/producto-modal.js` (`estaDisponible()`: `disponible` y stock > 0) con `template-parts/modal-producto.php`.
 
 **Mi reserva (página `/mi-reserva/`):**
 - Lista de la misma selección, paginada de 2 en 2.
@@ -93,7 +93,7 @@ Ruta: `wp-content/themes/casa-a/`. Activo.
 | Galería (login) | `galeria` | shortcode `[jwt_gallery]` |
 | Galería panel | `galeria-panel` | shortcode `[jwt_gallery_panel]` |
 
-### Catálogo de productos (integrado en `jwt-gallery` 2.1.3)
+### Catálogo de productos (integrado en `jwt-gallery` 2.1.5)
 
 El catálogo ya no es un plugin aparte: su código está en `wp-content/plugins/jwt-gallery/includes/catalogo/`. El plugin `casa-a-catalogo` está retirado. **No se instala junto a `jwt-gallery`**: sus funciones se repiten y PHP falla.
 
@@ -102,14 +102,14 @@ El catálogo ya no es un plugin aparte: su código está en `wp-content/plugins/
 - **Sincronización con la galería** (`includes/catalogo/sync-galeria.php`): cada pieza publicada en el panel crea o actualiza su producto, con título, descripción, medidas, categoría (buscada dentro de su principal), precio, cantidad, disponibilidad y las imágenes. La casilla "No disponible" manda sobre la cantidad. Si una imagen ya importada perdió su archivo, se reimporta. La primera imagen queda como destacada. Si la pieza va a la papelera, el producto también.
 - **Espejo de categorías** (`includes/catalogo/espejo-categorias.php`): cada categoría creada en el panel (`jg_gallery_category`) tiene su copia en `categoria_producto`. Al crear, editar, mover o eliminar una categoría o subcategoría en el panel, el catálogo se actualiza solo. La copia se busca por nombre **dentro del mismo padre**. Las copias se marcan con `_casa_a_origen`; el menú y el filtro muestran solo las que tienen una categoría del panel existente.
 
-### Plugin `jwt-gallery` ("CASA A Panel"), versión 2.1.3
+### Plugin `jwt-gallery` ("CASA A Panel"), versión 2.1.5
 
 Ruta: `wp-content/plugins/jwt-gallery/`. Activo.
 
 - **Login** (`/galeria/`, shortcode `[jwt_gallery]`) y **panel** (`/galeria-panel/`, shortcode `[jwt_gallery_panel]`), con el logo de lacasaa.cl en ambos. Autenticación con JWT y usuarios de WordPress; las credenciales no van en este archivo.
 - **Categorías:** un formulario "Nueva categoría" (principal) y otro "Nueva subcategoría" (la principal es obligatoria). Un solo nivel de subcategorías. Un mismo nombre puede repetirse en niveles distintos. Nombres: principales en MAYÚSCULAS; subcategorías con la primera letra en mayúscula y el resto en minúscula (se aplica en el servidor, `categoria_formato()`). Lista con botón + / − por principal, sangría en las subcategorías, arrastre de una subcategoría sobre otra principal para moverla, renombrar y eliminar. Buscador (encima de las pestañas) que filtra subcategorías, sin tildes ni mayúsculas.
 - **Publicar una pieza:** categoría principal y subcategoría (la subcategoría depende de la principal). Si la principal no tiene subcategorías, la pieza se guarda en la principal. Bajo los selectores aparece la ruta y el número de piezas.
-- **Piezas:** título, descripción, precio por día (CLP), cantidad, medidas, casilla "No disponible" y **de 1 a 3 imágenes** (el servidor rechaza más). Al editar: quitar imágenes con la ×, subir nuevas y **arrastrar para reordenar** (la primera es la principal). El orden se guarda.
+- **Piezas:** título, descripción (máx. 82 caracteres sin contar espacios), precio por día (CLP), cantidad, medidas (máx. 40 caracteres), casilla "No disponible" y **de 1 a 3 imágenes** (el servidor rechaza más). Al editar: quitar imágenes con la ×, subir nuevas y **arrastrar para reordenar** (la primera es la principal). El orden se guarda.
 - **Tarjetas del panel:** imagen con contador x/3, etiqueta de categoría arriba a la izquierda y etiqueta "No disponible" abajo a la izquierda.
 - **Almacenamiento:** imágenes en `wp-content/uploads/jg-gallery/`. Esa carpeta debe ser escribible por el usuario del servidor (`www-data`).
 - **Estilo:** el mismo del theme (paleta, Cascadia Code, esquinas rectas, botones negros con mayúsculas).
@@ -133,7 +133,7 @@ Ruta: `wp-content/plugins/jwt-gallery/`. Activo.
 - El PHP de línea de comandos es 7.3, pero WordPress 7.1 exige 7.4. Para scripts de mantenimiento se usa `/usr/bin/php8.3`.
 - Hay caché de página (LiteSpeed): tras cambios, recargar con Ctrl+F5 y purgar la caché del servidor.
 - **Local:** el plugin `casa-a-catalogo` se retiró de `wp-content/plugins/` (copia en el scratchpad) porque chocaba con `jwt-gallery`. El `.htaccess` local tiene `RewriteBase /wordpress/proyecto4/`, que es solo para este entorno.
-- **Producción (`lacasaa.cl`):** `CASA A Panel` activo, theme `CASA A` activo, `casa-a-catalogo` no instalado. Falta subir `casa-a-theme-1.4.61.zip` y `jwt-gallery-2.1.3.zip`, guardar enlaces permanentes y crear las páginas `galeria`, `galeria-panel`, `contacto`, `como-arrendar`, `condiciones-de-arriendo` y `politica-de-privacidad`.
+- **Producción (`lacasaa.cl`):** `CASA A Panel` activo, theme `CASA A` activo, `casa-a-catalogo` no instalado. Falta subir `casa-a-theme-1.4.63.zip` y `jwt-gallery-2.1.5.zip`, guardar enlaces permanentes y crear las páginas `galeria`, `galeria-panel`, `contacto`, `como-arrendar`, `condiciones-de-arriendo` y `politica-de-privacidad`.
 - **Credenciales:** `README.MD` tiene una contraseña en texto plano. No se repite aquí; debe quitarse del archivo y cambiarse.
 - **Recuadro "wordpress-proyecto3"** en las páginas: no está en el código del proyecto. Probablemente es una extensión del navegador; se comprueba en incógnito.
 
@@ -147,8 +147,8 @@ Ruta: `wp-content/plugins/jwt-gallery/`. Activo.
 - **Calendario de reservas** en Contacto (hoy hay solicitud de arriendo y formulario de mensaje).
 - **Despliegue a producción** de theme y plugins: definir cómo se suben los archivos.
 - Decidir si se borran `casa-a.zip` y `casa-a-catalogo.zip` (antiguos).
-- Confirmar en producción el selector de categoría padre al crear una subcategoría (plugin 2.1.3).
-- Revisar en producción que no queden copias fantasma de categorías borradas (con el theme 1.4.61 y el plugin 2.1.3, deberían desaparecer).
+- Confirmar en producción el selector de categoría padre al crear una subcategoría (plugin 2.1.5).
+- Revisar en producción que no queden copias fantasma de categorías borradas (con el theme 1.4.63 y el plugin 2.1.5, deberían desaparecer).
 - Quitar la contraseña de `README.MD` y cambiarla.
 - Revisar los estilos recuperados de Condiciones de arriendo: se tomaron de la transcripción de la sesión anterior.
 

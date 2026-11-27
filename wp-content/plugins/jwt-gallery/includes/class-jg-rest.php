@@ -19,9 +19,9 @@ class JG_REST {
 	 * popover de ayuda de cada campo. Si cambias uno, cambia aquí y nada más.
 	 */
 	const MAX_TITLE_CHARS        = 43;
-	const MAX_DESCRIPTION_CHARS  = 120;
+	const MAX_DESCRIPTION_CHARS  = 82;
 	const MAX_USAGE_CHARS        = 43;
-	const MAX_MEASUREMENTS_CHARS = 20;
+	const MAX_MEASUREMENTS_CHARS = 40;
 
 	const LOGIN_MAX_ATTEMPTS = 5;
 
@@ -918,6 +918,16 @@ class JG_REST {
 	 * falta en algunos hostings mínimos y provocaba un fatal
 	 * ("Call to undefined function mb_strlen()") al subir o editar imágenes.
 	 */
+	/**
+	 * Largo de la descripción sin contar espacios (ni saltos de línea).
+	 *
+	 * @param string $value Texto a medir.
+	 * @return int
+	 */
+	private static function description_length( $value ) {
+		return self::char_length( preg_replace( '/\s+/u', '', (string) $value ) );
+	}
+
 	private static function char_length( $value ) {
 		$value = (string) $value;
 
@@ -979,8 +989,8 @@ class JG_REST {
 		if ( self::char_length( $title ) > self::MAX_TITLE_CHARS ) {
 			return new WP_Error( 'jg_title_too_long', sprintf( 'El título puede tener hasta %d caracteres.', self::MAX_TITLE_CHARS ), array( 'status' => 400 ) );
 		}
-		if ( self::char_length( $description ) > self::MAX_DESCRIPTION_CHARS ) {
-			return new WP_Error( 'jg_description_too_long', sprintf( 'La descripción puede tener hasta %d caracteres.', self::MAX_DESCRIPTION_CHARS ), array( 'status' => 400 ) );
+		if ( self::description_length( $description ) > self::MAX_DESCRIPTION_CHARS ) {
+			return new WP_Error( 'jg_description_too_long', sprintf( 'La descripción puede tener hasta %d caracteres, sin contar espacios.', self::MAX_DESCRIPTION_CHARS ), array( 'status' => 400 ) );
 		}
 
 		$urls = self::collect_image_sources( $request );
@@ -1052,8 +1062,11 @@ class JG_REST {
 		if ( self::char_length( $title ) > self::MAX_TITLE_CHARS ) {
 			return new WP_Error( 'jg_title_too_long', sprintf( 'El título puede tener hasta %d caracteres.', self::MAX_TITLE_CHARS ), array( 'status' => 400 ) );
 		}
-		if ( self::char_length( $description ) > self::MAX_DESCRIPTION_CHARS ) {
-			return new WP_Error( 'jg_description_too_long', sprintf( 'La descripción puede tener hasta %d caracteres.', self::MAX_DESCRIPTION_CHARS ), array( 'status' => 400 ) );
+		// Solo se valida el largo si la descripción cambió: una pieza guardada antes con
+		// un texto más largo debe poder editarse (por ejemplo, marcarla como no disponible).
+		$descripcion_cambio = trim( $description ) !== trim( (string) $post->post_content );
+		if ( $descripcion_cambio && self::description_length( $description ) > self::MAX_DESCRIPTION_CHARS ) {
+			return new WP_Error( 'jg_description_too_long', sprintf( 'La descripción puede tener hasta %d caracteres, sin contar espacios.', self::MAX_DESCRIPTION_CHARS ), array( 'status' => 400 ) );
 		}
 
 		$old_urls = get_post_meta( $post->ID, '_jg_image_url', false );

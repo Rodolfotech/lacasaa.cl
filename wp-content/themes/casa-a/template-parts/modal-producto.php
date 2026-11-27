@@ -18,6 +18,7 @@
 	<div class="casa-a-modal-galeria">
 		<div class="casa-a-modal-principal">
 			<img src="" alt="" data-modal-principal>
+			<span class="casa-a-sin-stock" data-modal-nodisp-foto hidden><?php esc_html_e( 'No disponible', 'casa-a' ); ?></span>
 		</div>
 		<div class="casa-a-modal-miniaturas" data-modal-miniaturas></div>
 	</div>
@@ -28,6 +29,10 @@
 		<p class="casa-a-modal-atributos" data-modal-atributos></p>
 
 		<dl class="casa-a-modal-datos">
+			<div class="casa-a-modal-descripcion">
+				<dt><?php esc_html_e( 'Descripción', 'casa-a' ); ?></dt>
+				<dd data-modal-descripcion></dd>
+			</div>
 			<div>
 				<dt><?php esc_html_e( 'Medidas', 'casa-a' ); ?></dt>
 				<dd data-modal-medidas></dd>
@@ -49,6 +54,15 @@
 				<button type="button" data-modal-mas aria-label="<?php esc_attr_e( 'Agregar una unidad', 'casa-a' ); ?>">+</button>
 			</div>
 			<button type="button" class="casa-a-boton-enviar" data-modal-agregar><?php esc_html_e( 'Agregar a mi reserva', 'casa-a' ); ?></button>
+			<p class="casa-a-modal-consulta" data-modal-consulta hidden>
+				<?php
+				printf(
+					/* translators: %s: enlace a la página de contacto. */
+					esc_html__( 'Si quieres consultar por este producto, %s.', 'casa-a' ),
+					'<a href="' . esc_url( home_url( '/contacto/' ) ) . '">' . esc_html__( 'contáctanos', 'casa-a' ) . '</a>'
+				);
+				?>
+			</p>
 		</div>
 
 		<div class="casa-a-modal-aviso-fila" data-modal-aviso role="status" hidden>
