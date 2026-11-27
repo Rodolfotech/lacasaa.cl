@@ -105,7 +105,7 @@ body.jg-blank-page {
 .jg-panel {
 	background: var(--jg-surface);
 	border: 1px solid var(--jg-border);
-	border-radius: 8px;
+	border-radius: 0;
 	padding: 20px 22px;
 }
 
@@ -145,7 +145,7 @@ body.jg-blank-page {
 	font: inherit;
 	padding: 9px 10px;
 	border: 1px solid var(--jg-border);
-	border-radius: 5px;
+	border-radius: 0;
 	color: var(--jg-ink);
 	background: #fff;
 }
@@ -185,7 +185,7 @@ body.jg-blank-page {
 	height: 30px;
 	padding: 0;
 	border: none;
-	border-radius: 50%;
+	border-radius: 0;
 	background: transparent;
 	color: var(--jg-muted);
 	cursor: pointer;
@@ -205,7 +205,7 @@ body.jg-blank-page {
 	font: inherit;
 	font-weight: 600;
 	padding: 9px 18px;
-	border-radius: 5px;
+	border-radius: 0;
 	border: 1px solid var(--jg-ink);
 	background: var(--jg-ink);
 	color: #fff;
@@ -259,7 +259,7 @@ body.jg-blank-page {
 	font-size: 0.8rem;
 	font-weight: 600;
 	border: 1px solid var(--jg-accent);
-	border-radius: 5px;
+	border-radius: 0;
 	background: var(--jg-accent);
 	color: #fff;
 	cursor: pointer;
@@ -393,7 +393,7 @@ body.jg-blank-page {
 	gap: 8px;
 	padding: 8px 10px;
 	border: 1px solid var(--jg-border);
-	border-radius: 5px;
+	border-radius: 0;
 	max-width: 100%;
 }
 
@@ -418,7 +418,7 @@ body.jg-blank-page {
 	font: inherit;
 	padding: 5px 8px;
 	border: 1px solid var(--jg-border);
-	border-radius: 4px;
+	border-radius: 0;
 }
 
 .jg-category-edit-btn {
@@ -429,7 +429,7 @@ body.jg-blank-page {
 	height: 26px;
 	padding: 0;
 	border: none;
-	border-radius: 50%;
+	border-radius: 0;
 	background: transparent;
 	color: var(--jg-muted);
 	cursor: pointer;
@@ -448,7 +448,7 @@ body.jg-blank-page {
 	height: 26px;
 	padding: 0;
 	border: none;
-	border-radius: 50%;
+	border-radius: 0;
 	background: transparent;
 	color: var(--jg-muted);
 	cursor: pointer;
@@ -485,7 +485,7 @@ body.jg-blank-page {
 	font-size: 0.72rem;
 	font-weight: 600;
 	padding: 1px 7px;
-	border-radius: 999px;
+	border-radius: 0;
 	background: var(--jg-surface-2);
 	color: var(--jg-muted);
 }
@@ -518,7 +518,7 @@ body.jg-blank-page {
 
 .jg-card {
 	border: 1px solid var(--jg-border);
-	border-radius: 8px;
+	border-radius: 0;
 	overflow: hidden;
 	background: var(--jg-surface);
 	display: flex;
@@ -535,7 +535,7 @@ body.jg-blank-page {
 	position: relative;
 	aspect-ratio: 4 / 3;
 	overflow: hidden;
-	background: #eee;
+	background: #E9E9E9;
 }
 
 .jg-card-figure img {
@@ -550,7 +550,7 @@ body.jg-blank-page {
 	top: 8px;
 	left: 8px;
 	padding: 3px 10px;
-	border-radius: 999px;
+	border-radius: 0;
 	background: rgba(20, 22, 20, 0.72);
 	color: #fff;
 	font-size: 0.72rem;
@@ -585,7 +585,7 @@ body.jg-blank-page {
 	height: 26px;
 	padding: 0;
 	border: none;
-	border-radius: 50%;
+	border-radius: 0;
 	background: rgba(20, 22, 20, 0.55);
 	color: #fff;
 	cursor: pointer;
@@ -615,7 +615,7 @@ body.jg-blank-page {
 	bottom: 8px;
 	right: 8px;
 	padding: 2px 8px;
-	border-radius: 999px;
+	border-radius: 0;
 	background: rgba(20, 22, 20, 0.72);
 	color: #fff;
 	font-size: 0.7rem;
@@ -631,9 +631,8 @@ body.jg-blank-page {
 	height: 26px;
 	padding: 0;
 	border: none;
-	border-radius: 6px;
+	border-radius: 0;
 	cursor: pointer;
-	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
 .jg-card-icon-btn--edit {
@@ -652,7 +651,7 @@ body.jg-blank-page {
 }
 
 .jg-card-icon-btn--delete:hover {
-	background: #911d16;
+	background: #B3261E;
 }
 
 .jg-card-body {
@@ -727,7 +726,7 @@ body.jg-blank-page {
 	font-weight: 600;
 	padding: 7px 12px;
 	border: 1px solid var(--jg-border);
-	border-radius: 5px;
+	border-radius: 0;
 	background: #fff;
 	color: var(--jg-ink);
 	cursor: pointer;
@@ -750,7 +749,7 @@ body.jg-blank-page {
 	width: 30px;
 	height: 30px;
 	border: 1px solid transparent;
-	border-radius: 5px;
+	border-radius: 0;
 	background: transparent;
 	color: var(--jg-muted);
 	cursor: pointer;
@@ -781,7 +780,7 @@ body.jg-blank-page {
 	--jgm-surface: #ffffff;
 	--jgm-accent: #000000; /* botón de confirmar: negro, igual que el resto de los botones primarios */
 	--jgm-green: #000000; /* botón "Cancelar": verde del theme (--ta-accent) */
-	--jgm-accent-dark: #026a3b; /* hover verde oscuro */
+	--jgm-accent-dark: #B0A08A; /* hover verde oscuro */
 	--jgm-danger: #b3261e;
 
 	position: fixed;
@@ -797,11 +796,10 @@ body.jg-blank-page {
 
 .jg-modal {
 	background: var(--jgm-surface);
-	border-radius: 10px;
+	border-radius: 0;
 	padding: 24px;
 	max-width: 380px;
 	width: 100%;
-	box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
 }
 
 .jg-modal-title {
@@ -829,7 +827,7 @@ body.jg-blank-page {
 	font-weight: 600;
 	font-size: 0.9rem;
 	padding: 9px 18px;
-	border-radius: 6px;
+	border-radius: 0;
 	border: 1px solid var(--jgm-accent);
 	background: var(--jgm-accent);
 	color: #fff;
@@ -882,7 +880,7 @@ body.jg-blank-page {
 	font: inherit;
 	padding: 9px 10px;
 	border: 1px solid var(--jg-border);
-	border-radius: 5px;
+	border-radius: 0;
 	color: var(--jg-ink);
 	background: #fff;
 }
@@ -894,9 +892,9 @@ body.jg-blank-page {
 
 .jg-picker-existing {
 	align-items: center;
-	background: var(--jg-bg, #f7f7f7);
+	background: var(--jg-bg, #FFFFFF);
 	border: 1px solid var(--jg-border);
-	border-radius: 5px;
+	border-radius: 0;
 	padding: 4px;
 }
 
@@ -908,7 +906,7 @@ body.jg-blank-page {
 	width: 42px;
 	height: 42px;
 	object-fit: cover;
-	border-radius: 3px;
+	border-radius: 0;
 	flex: none;
 	display: block;
 	background: #e9e9e9;
@@ -926,7 +924,7 @@ body.jg-blank-page {
 	justify-content: center;
 	width: 34px;
 	border: 1px solid var(--jg-border);
-	border-radius: 5px;
+	border-radius: 0;
 	background: #fff;
 	color: var(--jg-muted);
 	font-size: 1.1rem;
@@ -1033,7 +1031,7 @@ body.jg-blank-page {
 	min-width: 18px;
 	padding: 0;
 	border: 1px solid var(--jg-muted);
-	border-radius: 50%;
+	border-radius: 0;
 	background: transparent;
 	color: var(--jg-muted);
 	font: 700 11px/1 "Manrope", system-ui, sans-serif;
@@ -1062,9 +1060,8 @@ body.jg-blank-page {
 	z-index: 50;
 	padding: 12px 14px;
 	border: 1px solid var(--jg-border);
-	border-radius: 10px;
+	border-radius: 0;
 	background: #fff;
-	box-shadow: 0 8px 24px rgba(26, 28, 28, 0.12);
 	color: var(--jg-ink);
 	font-size: 0.8rem;
 	line-height: 1.5;
@@ -1102,7 +1099,7 @@ body.jg-blank-page {
 
 .jg-hint-list li {
 	padding: 2px 10px;
-	border-radius: 999px;
+	border-radius: 0;
 	background: var(--jg-surface-2);
 	color: var(--jg-ink);
 	font-weight: 600;
@@ -1117,7 +1114,7 @@ body.jg-blank-page {
 	margin-top: 8px;
 	padding: 8px 10px;
 	border-left: 3px solid var(--jg-accent);
-	border-radius: 4px;
+	border-radius: 0;
 	background: rgba(3, 133, 74, 0.08);
 	color: var(--jg-ink);
 }
@@ -1152,7 +1149,7 @@ body.jg-blank-page {
 	font: inherit;
 	font-size: 0.95rem;
 	border: 1px solid var(--jg-border);
-	border-radius: 5px;
+	border-radius: 0;
 	background: #fff;
 	color: var(--jg-ink);
 }
@@ -1190,4 +1187,48 @@ body.jg-blank-page {
 	align-items: center;
 	gap: 8px;
 	cursor: pointer;
+}
+
+/* Logo de lacasaa.cl (theme assets/img/LOGO.jpeg) en el login y en el panel (versión 2.0.28) */
+.jg-brand-logo {
+	display: block;
+	height: 56px;
+	width: auto;
+}
+
+.jg-topbar .jg-brand-logo {
+	height: 40px;
+}
+
+/* Estilo del proyecto: botones como el theme (negro o taupe, mayúsculas, Cascadia Code) (versión 2.0.29) */
+.jg-gallery button[type="submit"] {
+	background: #000000;
+	border: 1px solid #000000;
+	color: #FFFFFF;
+	font-family: "Cascadia Code", ui-monospace, monospace;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.jg-gallery button[type="submit"]:hover:not(:disabled),
+.jg-gallery button[type="submit"]:focus-visible:not(:disabled) {
+	background: #A0968C;
+	border-color: #A0968C;
+	color: #000000;
+}
+
+.jg-gallery button[type="submit"]:disabled {
+	opacity: 0.45;
+	cursor: default;
+}
+
+.jg-gallery input,
+.jg-gallery select,
+.jg-gallery textarea,
+.jg-gallery button {
+	font-family: "Cascadia Code", ui-monospace, monospace;
 }
