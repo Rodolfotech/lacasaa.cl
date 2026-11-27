@@ -4379,3 +4379,41 @@ Clic en **Cerrar sesión** (barra superior) → se borra la sesión local y el n
 - **Causa:** la categoría ID 9 de producción se creó como `vidrios` y luego se renombró desde el panel. `update_category()` solo cambia `name`, no `slug`.
 - **Arreglo:** `JG_CPT::LEGACY_SLUGS = array( 'vidrios' => 'trabajos-especiales' )` y `JG_CPT::migrate_legacy_slugs()` en `init` (prioridad 20). Si existe el slug antiguo y no el nuevo, hace `wp_update_term( …, array( 'slug' => nuevo ) )`: es el mismo término, así que las piezas siguen asociadas. Lo deja registrado en la opción autocargada `jg_slug_migrations`, que se escribe solo cuando hay algo pendiente. El tema 2.3.6 redirige `?categoria=vidrios` con 301.
 - **Pendiente para decidir con el cliente:** renombrar una categoría en el panel sigue sin cambiar su slug. Si en el futuro se renombra, por ejemplo, "Proteger" → "Protección", la URL seguirá diciendo `proteger`.
+
+---
+
+## 14. Estado actual de `jwt-gallery` en lacasaa.cl (versión 2.0.29, 2026-11-27)
+
+Esta sección resume lo que hace el plugin hoy en lacasaa.cl. Las secciones anteriores describen el plugin original (proyecto3).
+
+### Pantallas
+
+- **Login** (`/galeria/`, shortcode `[jwt_gallery]`): logo de lacasaa.cl (`assets/img/LOGO.jpeg` del theme), formulario de correo y contraseña.
+- **Panel** (`/galeria-panel/`, shortcode `[jwt_gallery_panel]`): cabecera con el logo y cierre de sesión; columna izquierda con "Subir imagen" y "Categorías"; contenido con las pestañas de categoría y la grilla de piezas. Buscador de categorías encima de las pestañas.
+
+### Categorías
+
+- Taxonomía `jg_gallery_category` jerárquica, de **un solo nivel de subcategorías**. Un mismo nombre puede repetirse en niveles distintos.
+- **Crear:** dos formularios, "Nueva categoría" (principal) y "Nueva subcategoría" (con la principal obligatoria). `POST /categories` acepta `parent_id`.
+- **Lista:** cada principal con botón + / − que muestra u oculta sus subcategorías (con sangría). Las subcategorías se pueden **arrastrar** sobre otra principal para moverlas (`PUT /categories/{id}` con `parent_id`).
+- **Renombrar y eliminar:** desde la lista. Eliminar una categoría borra sus piezas (se pide confirmación).
+- **Buscador:** filtra solo subcategorías, en la lista y en las pestañas, sin tildes ni mayúsculas.
+- **Respuesta de la API:** cada categoría trae `parent` y `path` ("Padre › Hijo"), con los nombres sin entidades HTML.
+- **Espejo en el catálogo:** cada cambio en las categorías lo recoge el plugin `casa-a-catalogo` (ver `AGENT.md`).
+
+### Piezas
+
+- **Campos:** título, descripción, precio por día (CLP), cantidad, medidas, categoría principal y subcategoría, casilla "No disponible" y de 1 a 3 imágenes.
+- **Publicar:** la categoría principal es obligatoria; la subcategoría depende de la principal. Si la principal no tiene subcategorías, la pieza queda en la principal. Bajo los selectores aparece la ruta y el número de piezas.
+- **Editar:** cambiar datos, quitar imágenes (×), subir nuevas y **reordenar arrastrando** las miniaturas. La primera imagen es la principal. Las imágenes se guardan en el orden de la pantalla y las nuevas van al final.
+- **Límite:** `JG_REST::MAX_IMAGES_PER_POST = 3`. El servidor rechaza más de 3 archivos al crear o editar.
+- **Tarjetas:** imagen con contador x/3; etiqueta de categoría arriba a la izquierda; etiqueta "No disponible" abajo a la izquierda cuando corresponde.
+- **Almacenamiento:** `wp-content/uploads/jg-gallery/`. Esa carpeta debe ser escribible por `www-data`.
+
+### Cambios de esta versión frente al plugin original
+
+- Logo en login y panel; textos "CASA A" reemplazados.
+- Categorías jerárquicas con alta, edición, movimiento y eliminación; buscador; lista plegable.
+- Disponibilidad ("No disponible") y reordenado de imágenes.
+- Estilo alineado con el theme: paleta, Cascadia Code, esquinas rectas, botones negros con mayúsculas.
+- Versiones: `JG_VERSION` sube en cada cambio para que el navegador cargue los archivos nuevos.

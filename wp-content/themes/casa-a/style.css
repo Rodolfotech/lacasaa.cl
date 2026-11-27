@@ -1,7 +1,7 @@
 /*
 Theme Name: CASA A
 Description: Theme visual para CASA A, espacio boutique multifuncional y hub creativo.
-Version: 1.4.51
+Version: 1.4.53
 Requires at least: 6.0
 Requires PHP: 7.3
 Text Domain: casa-a
@@ -5133,4 +5133,84 @@ body.home .casa-a-header.is-forzado .casa-a-menu-toggle span {
 
 .casa-a-drawer-panel > .casa-a-drawer-pie {
 	margin-top: 0;
+}
+
+/* Buscador del navbar: sugerencias de categorías y productos (versión 1.4.52) */
+.casa-a-buscador {
+	position: relative;
+}
+
+.casa-a-sugerencias {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	z-index: 200;
+	max-height: 60vh;
+	overflow-y: auto;
+	scrollbar-width: none;
+	background: var(--casa-a-blanco);
+	border: 1px solid var(--casa-a-gris-claro);
+	border-top: 0;
+}
+
+.casa-a-sugerencias::-webkit-scrollbar {
+	display: none;
+}
+
+.casa-a-sugerencias[hidden] {
+	display: none;
+}
+
+.casa-a-sugerencias-titulo {
+	margin: 0;
+	padding: 12px 16px 6px;
+	font-size: 0.65rem;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--casa-a-gris);
+}
+
+.casa-a-sugerencia {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 16px;
+	font-size: 0.8rem;
+	color: var(--casa-a-negro);
+	text-decoration: none;
+}
+
+.casa-a-sugerencia:hover,
+.casa-a-sugerencia:focus-visible {
+	background: var(--casa-a-gris-claro);
+}
+
+.casa-a-sugerencia img {
+	flex: none;
+	width: 40px;
+	height: 40px;
+	object-fit: cover;
+	background: var(--casa-a-gris-claro);
+}
+
+.casa-a-sugerencia span {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.casa-a-sugerencia small {
+	font-size: 0.68rem;
+	color: var(--casa-a-gris);
+}
+
+/* Filtro del catálogo: las subcategorías van una debajo de otra (versión 1.4.53) */
+.casa-a-filtro-grupo .casa-a-chips {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
 }

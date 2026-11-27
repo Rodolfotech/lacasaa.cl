@@ -826,3 +826,115 @@ function casa_a_enqueue_filtro_categorias() {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'casa_a_enqueue_filtro_categorias' );
+
+/**
+ * Buscador: sugerencias de categorías (solo las que tienen productos) y de productos.
+ * Ruta: /wp-json/casa-a/v1/sugerencias?q=...
+ */
+add_action(
+	'rest_api_init',
+	function () {
+		register_rest_route(
+			'casa-a/v1',
+			'/sugerencias',
+			array(
+				'methods'             => 'GET',
+				'callback'            => 'casa_a_sugerencias',
+				'permission_callback' => '__return_true',
+				'args'                => array(
+					'q' => array(
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+				),
+			)
+		);
+	}
+);
+
+function casa_a_sugerencias( $request ) {
+	$q         = trim( (string) $request->get_param( 'q' ) );
+	$respuesta = array(
+		'categorias' => array(),
+		'productos'  => array(),
+	);
+
+	if ( mb_strlen( $q ) < 2 || ! function_exists( 'casa_a_categorias_del_plugin' ) ) {
+		return rest_ensure_response( $respuesta );
+	}
+
+	$aguja = remove_accents( mb_strtolower( $q ) );
+	$todas = casa_a_categorias_del_plugin();
+
+	// Una categoría cuenta si tiene productos, directos o en sus subcategorías.
+	$con_productos = array();
+	foreach ( $todas as $t ) {
+		if ( $t->count > 0 ) {
+			$con_productos[ $t->term_id ] = true;
+		}
+	}
+	foreach ( $todas as $t ) {
+		if ( $t->parent && isset( $con_productos[ $t->term_id ] ) && $t->parent ) {
+			$con_productos[ $t->parent ] = true;
+		}
+	}
+
+	foreach ( $todas as $t ) {
+		if ( empty( $con_productos[ $t->term_id ] ) ) {
+			continue;
+		}
+
+		$nombre = wp_specialchars_decode( $t->name, ENT_QUOTES );
+		$ruta   = $nombre;
+
+		if ( $t->parent ) {
+			$padre = get_term( $t->parent, 'categoria_producto' );
+			if ( $padre instanceof WP_Term ) {
+				$ruta = wp_specialchars_decode( $padre->name, ENT_QUOTES ) . ' › ' . $nombre;
+			}
+		}
+
+		if ( false !== strpos( remove_accents( mb_strtolower( $ruta ) ), $aguja ) ) {
+			$respuesta['categorias'][] = array(
+				'nombre' => $ruta,
+				'url'    => add_query_arg( 'categoria', $t->slug, home_url( '/producto/' ) ),
+			);
+		}
+
+		if ( count( $respuesta['categorias'] ) >= 6 ) {
+			break;
+		}
+	}
+
+	$consulta = new WP_Query(
+		array(
+			'post_type'      => 'producto',
+			'post_status'    => 'publish',
+			'posts_per_page' => 5,
+			's'              => $q,
+			'no_found_rows'  => true,
+		)
+	);
+
+	foreach ( $consulta->posts as $post ) {
+		$precio = get_post_meta( $post->ID, 'casa_a_precio_dia', true );
+		$codigo = get_post_meta( $post->ID, 'casa_a_codigo', true );
+
+		$respuesta['productos'][] = array(
+			'nombre' => get_the_title( $post ),
+			'url'    => get_permalink( $post ),
+			'codigo' => $codigo ? $codigo : 'CA-' . str_pad( (string) $post->ID, 4, '0', STR_PAD_LEFT ),
+			'precio' => ( '' !== (string) $precio ) ? '$' . number_format( (int) $precio, 0, ',', '.' ) . ' / día' : '',
+			'imagen' => get_the_post_thumbnail_url( $post, 'thumbnail' ) ? get_the_post_thumbnail_url( $post, 'thumbnail' ) : '',
+		);
+	}
+
+	return rest_ensure_response( $respuesta );
+}
+
+/**
+ * Buscador: script de sugerencias.
+ */
+function casa_a_enqueue_buscador() {
+	wp_enqueue_script( 'casa-a-buscador', get_template_directory_uri() . '/assets/js/buscador.js', array(), wp_get_theme()->get( 'Version' ), true );
+}
+add_action( 'wp_enqueue_scripts', 'casa_a_enqueue_buscador' );

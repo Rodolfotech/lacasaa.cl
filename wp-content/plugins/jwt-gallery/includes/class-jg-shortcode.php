@@ -67,7 +67,7 @@ class JG_Shortcode {
 		?>
 		<div class="jg-gallery" data-jg-root data-jg-view="login">
 			<div class="jg-brand">
-				<span class="jg-brand-name">CASA A</span>
+				<img class="jg-brand-logo" src="<?php echo esc_url( get_template_directory_uri() . '/assets/img/LOGO.jpeg' ); ?>" alt="lacasaa.cl">
 			</div>
 			<section class="jg-panel jg-panel--narrow">
 				<form class="jg-form" data-jg-login>
@@ -96,7 +96,7 @@ class JG_Shortcode {
 
 			<header class="jg-topbar">
 				<div class="jg-brand">
-					<span class="jg-brand-name">CASA A</span>
+					<img class="jg-brand-logo" src="<?php echo esc_url( get_template_directory_uri() . '/assets/img/LOGO.jpeg' ); ?>" alt="lacasaa.cl">
 				</div>
 				<div class="jg-topbar-actions">
 					<span class="jg-topbar-user" data-jg-user></span>

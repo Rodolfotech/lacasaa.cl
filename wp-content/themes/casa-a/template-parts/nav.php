@@ -30,6 +30,7 @@ $casa_a_seleccion = 0;
 			<label class="screen-reader-text" for="casa-a-buscar"><?php esc_html_e( 'Buscar producto', 'casa-a' ); ?></label>
 			<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
 			<input type="search" id="casa-a-buscar" name="s" placeholder="<?php esc_attr_e( 'Buscar', 'casa-a' ); ?>" value="<?php echo esc_attr( get_search_query() ); ?>">
+			<div class="casa-a-sugerencias" data-sugerencias data-endpoint="<?php echo esc_url( rest_url( 'casa-a/v1/sugerencias' ) ); ?>" hidden></div>
 		</form>
 	<div class="casa-a-nav-der">
 		<a class="casa-a-nav-enlace" href="<?php echo esc_url( home_url( '/contacto/' ) ); ?>"><?php esc_html_e( 'Contacto', 'casa-a' ); ?></a>
