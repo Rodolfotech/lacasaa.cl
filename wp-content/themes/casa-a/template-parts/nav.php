@@ -21,7 +21,7 @@ $casa_a_seleccion = 0;
 		</button>
 
 		<a class="casa-a-logo" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="lacasaa.cl">
-			<img class="casa-a-logo-img" src="<?php echo esc_url( get_template_directory_uri() . '/assets/img/LOGO.jpeg' ); ?>" alt="lacasaa.cl" width="auto" height="auto">
+			<img class="casa-a-logo-img" src="<?php echo esc_url( casa_a_logo_url() ); ?>" alt="lacasaa.cl" width="auto" height="auto">
 		</a>
 	</div>
 

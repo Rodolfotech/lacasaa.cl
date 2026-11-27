@@ -7,11 +7,10 @@
  * @package CASA_A
  */
 ?>
-<div class="casa-a-cookies" role="dialog" aria-labelledby="casa-a-cookies-texto" hidden data-cookies data-version="1" data-gtm="GTM-5CFDL8ZS" data-clarity="zi7qd4b8ue">
+<div class="casa-a-cookies" role="dialog" aria-labelledby="casa-a-cookies-texto" hidden data-cookies data-version="2" data-gtm="GTM-5CFDL8ZS" data-clarity="zi7qd4b8ue">
 	<p id="casa-a-cookies-texto" class="casa-a-cookies-texto">
-		<?php esc_html_e( 'Usamos cookies de analítica de', 'casa-a' ); ?> <strong>Microsoft Clarity</strong> <?php esc_html_e( 'y', 'casa-a' ); ?> <strong>Google Analytics</strong>
-		<?php esc_html_e( 'para medir cómo se usa lacasaa.cl y mejorarlo. Solo se activan si las aceptas; si no, no se cargan. Estos servicios tratan parte de los datos fuera de Chile. Puedes cambiar tu decisión cuando quieras con «Configurar cookies» en el pie de página.', 'casa-a' ); ?>
-		<a href="<?php echo esc_url( home_url( '/politica-de-privacidad/' ) ); ?>"><?php esc_html_e( 'Más información en la política de privacidad (versión 1.0, 23-11-2026)', 'casa-a' ); ?></a>
+		<?php esc_html_e( 'Usamos cookies de medición (Google Analytics, Microsoft Clarity y Google Tag Manager) para entender cómo se usa el sitio. Solo se instalan si las aceptas. Más información en la', 'casa-a' ); ?>
+		<a href="<?php echo esc_url( home_url( '/politica-de-privacidad/' ) ); ?>"><?php esc_html_e( 'Política de privacidad', 'casa-a' ); ?></a>.
 	</p>
 	<p class="casa-a-cookies-estado" data-cookies-estado hidden></p>
 	<div class="casa-a-cookies-botones">

@@ -39,7 +39,7 @@ $casa_a_wa_href  = $casa_a_datos['whatsapp'] ? 'https://wa.me/' . preg_replace( 
 
 		<div class="casa-a-footer-marca">
 			<a class="casa-a-footer-logo" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="lacasaa.cl">
-				<img class="casa-a-footer-logo-img" src="<?php echo esc_url( get_template_directory_uri() . '/assets/img/LOGO.jpeg' ); ?>" alt="lacasaa.cl" width="auto" height="auto">
+				<img class="casa-a-footer-logo-img" src="<?php echo esc_url( casa_a_logo_url() ); ?>" alt="lacasaa.cl" width="auto" height="auto">
 			</a>
 			<p><?php echo esc_html( $casa_a_datos['descripcion'] ); ?></p>
 		</div>

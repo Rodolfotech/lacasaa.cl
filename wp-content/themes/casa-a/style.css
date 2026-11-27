@@ -1,7 +1,7 @@
 /*
 Theme Name: CASA A
 Description: Theme visual para CASA A, espacio boutique multifuncional y hub creativo.
-Version: 1.4.63
+Version: 1.4.109
 Requires at least: 6.0
 Requires PHP: 7.3
 Text Domain: casa-a
@@ -5353,4 +5353,329 @@ body.home .casa-a-header.is-forzado .casa-a-menu-toggle span {
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
+}
+
+/* Mi reserva (regla final): mismo ancho visible que el footer; formulario más angosto */
+.casa-a-reserva-grid.casa-a-wrap {
+	max-width: 1154px;
+}
+
+.casa-a-reserva-grid {
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.casa-a-reserva-form-wrap {
+	max-width: 560px;
+	justify-self: end;
+	width: 100%;
+}
+
+/* Mi reserva: el botón para quitar un producto es un basurero arriba a la derecha de la fila */
+.casa-a-reserva-item {
+	position: relative;
+	padding-right: 48px;
+}
+
+.casa-a-reserva-quitar {
+	position: absolute;
+	top: 22px;
+	right: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	background: #fff;
+	border: 1px solid var(--casa-a-negro);
+	color: var(--casa-a-negro);
+	cursor: pointer;
+}
+
+.casa-a-reserva-quitar:hover {
+	background: var(--casa-a-negro);
+	color: #fff;
+}
+
+/* Modal de confirmación de Mi reserva (reserva.js, función confirmar): mismo diseño que el del panel */
+.casa-a-confirm-fondo {
+	position: fixed;
+	inset: 0;
+	z-index: 1000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	background: rgba(20, 22, 20, 0.5);
+	font-family: "Cascadia Code", ui-monospace, monospace;
+}
+
+.casa-a-confirm {
+	max-width: 380px;
+	width: 100%;
+	padding: 24px;
+	background: #fff;
+	color: var(--casa-a-negro);
+}
+
+.casa-a-confirm-mensaje {
+	margin: 0;
+	font-size: 0.92rem;
+	line-height: 1.5;
+	color: #8E8E8E;
+}
+
+.casa-a-confirm-acciones {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 22px;
+}
+
+.casa-a-confirm-acciones button {
+	font: inherit;
+	font-weight: 600;
+	font-size: 0.9rem;
+	padding: 9px 18px;
+	border: 1px solid var(--casa-a-negro);
+	background: var(--casa-a-negro);
+	color: #fff;
+	cursor: pointer;
+}
+
+.casa-a-confirm-acciones button:hover {
+	background: var(--casa-a-taupe);
+	border-color: var(--casa-a-taupe);
+}
+
+/* Modal de confirmación: "Cancelar" en gris taupe y "Aceptar" en negro, con hover de la paleta */
+.casa-a-confirm-acciones .casa-a-confirm-cancelar {
+	background: var(--casa-a-gris-taupe);
+	border-color: var(--casa-a-gris-taupe);
+	color: #fff;
+}
+
+.casa-a-confirm-acciones .casa-a-confirm-cancelar:hover {
+	background: var(--casa-a-gris);
+	border-color: var(--casa-a-gris);
+}
+
+.casa-a-confirm-acciones .casa-a-confirm-aceptar {
+	background: var(--casa-a-negro);
+	border-color: var(--casa-a-negro);
+	color: #fff;
+}
+
+.casa-a-confirm-acciones .casa-a-confirm-aceptar:hover {
+	background: var(--casa-a-taupe);
+	border-color: var(--casa-a-taupe);
+}
+
+/* Modal de confirmación: todo centrado (título, mensaje y botones) */
+.casa-a-confirm {
+	text-align: center;
+}
+
+.casa-a-confirm-titulo {
+	margin: 0 0 12px;
+	font-size: 1.05rem;
+	font-weight: 600;
+	color: var(--casa-a-negro);
+}
+
+.casa-a-confirm-acciones {
+	justify-content: center;
+}
+
+/* Mi reserva: campos obligatorios vacíos o con datos no válidos tras un error de envío */
+.casa-a-reserva-form .casa-a-campo-invalido {
+	border-color: #b3261e;
+	outline: 1px solid #b3261e;
+}
+
+/* Mi reserva: mensaje en línea que nombra los campos obligatorios incompletos o con errores */
+.casa-a-reserva-error {
+	margin: 16px 0 0;
+	font-family: "Cascadia Code", ui-monospace, monospace;
+	font-size: 0.82rem;
+	font-weight: 600;
+	color: #b3261e;
+	line-height: 1.5;
+}
+
+.casa-a-reserva-error[hidden] {
+	display: none;
+}
+
+/* Mi reserva: el asterisco de los campos obligatorios muestra un popover "Campo obligatorio" al pasar el mouse o enfocarlo */
+.casa-a-obligatorio {
+	position: relative;
+	cursor: help;
+	outline-offset: 2px;
+}
+
+.casa-a-obligatorio::after {
+	content: attr(data-tip);
+	position: absolute;
+	bottom: calc(100% + 8px);
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 10;
+	padding: 6px 10px;
+	background: var(--casa-a-negro);
+	color: #fff;
+	font-family: "Cascadia Code", ui-monospace, monospace;
+	font-size: 0.72rem;
+	font-weight: 400;
+	letter-spacing: 0;
+	text-transform: none;
+	white-space: nowrap;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transition: opacity 0.15s ease;
+}
+
+.casa-a-obligatorio:hover::after,
+.casa-a-obligatorio:focus-visible::after {
+	opacity: 1;
+	visibility: visible;
+}
+
+/* Contacto: campos con error y mensaje en línea (page-contacto.php) */
+.casa-a-form .casa-a-campo-invalido {
+	border-color: #b3261e;
+	outline: 1px solid #b3261e;
+}
+
+.casa-a-contacto-error {
+	margin: 0 0 16px;
+	font-family: "Cascadia Code", ui-monospace, monospace;
+	font-size: 0.82rem;
+	font-weight: 600;
+	color: #b3261e;
+	line-height: 1.5;
+}
+
+.casa-a-contacto-error[hidden] {
+	display: none;
+}
+
+/* Mensaje de error debajo de cada campo (validacion-campos.js) */
+.casa-a-campo-error {
+	display: block;
+	margin: 6px 0 0;
+	font-family: "Cascadia Code", ui-monospace, monospace;
+	font-size: 0.78rem;
+	font-weight: 600;
+	color: #b3261e;
+	line-height: 1.4;
+	text-transform: none;
+	letter-spacing: 0;
+}
+
+/* Menú lateral: categorías con flecha; al abrir una se ven solo sus subcategorías */
+.casa-a-menu-lateral [hidden] {
+	display: none !important;
+}
+
+.casa-a-menu-lateral .casa-a-menu-grupo-titulo {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 12px 0;
+	background: none;
+	border: 0;
+	font: inherit;
+	font-weight: 600;
+	text-align: left;
+	color: inherit;
+	cursor: pointer;
+}
+
+.casa-a-menu-flecha {
+	font-size: 1.3rem;
+	line-height: 1;
+}
+
+.casa-a-menu-lateral .casa-a-menu-volver {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	padding: 12px 0;
+	background: none;
+	border: 0;
+	font: inherit;
+	font-weight: 700;
+	text-align: left;
+	color: inherit;
+	cursor: pointer;
+}
+
+/* Menú lateral: las subcategorías se muestran una debajo de otra */
+.casa-a-menu-lateral .casa-a-menu-subs {
+	display: flex;
+	flex-direction: column;
+}
+
+.casa-a-menu-lateral .casa-a-menu-subs > a {
+	display: block;
+	width: 100%;
+}
+
+/* Menú lateral: misma tipografía del proyecto (Cascadia Code) en todo el menú y sus botones */
+.casa-a-menu-lateral,
+.casa-a-menu-lateral button,
+.casa-a-menu-lateral a {
+	font-family: "Cascadia Code", ui-monospace, monospace;
+}
+
+/* Menú abierto (hamburguesa o logo): el navbar queda blanco y por encima del fondo oscuro, igual que el menú */
+.casa-a-header.is-forzado {
+	z-index: 150;
+	background: var(--casa-a-blanco);
+}
+
+/* Portada con el menú abierto: el navbar sigue por encima del velo oscuro */
+body.home .casa-a-header.is-forzado {
+	z-index: 150;
+}
+
+/* Menú lateral: "Ver todo" y los títulos de categoría con la misma tipografía */
+.casa-a-menu-lateral .casa-a-menu-ver-todo,
+.casa-a-menu-lateral .casa-a-menu-grupo-titulo {
+	font-family: "Cascadia Code", ui-monospace, monospace;
+	font-size: 1rem;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+/* Menú lateral con el mismo blanco sólido del navbar */
+.casa-a-menu-lateral {
+	background: var(--casa-a-blanco);
+	backdrop-filter: none;
+}
+
+/* Navbar y menú lateral abiertos: el mismo blanco puro, sin sombra que los tiña */
+.casa-a-header.is-forzado,
+.casa-a-menu-lateral {
+	background: #FFFFFF !important;
+	box-shadow: none;
+}
+
+/* Banner de cookies: fijo al pie de la pantalla mientras no se acepte ni rechace */
+.casa-a-cookies:not([hidden]) {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 900;
+	box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+}
+
+body:has(.casa-a-cookies:not([hidden])) {
+	padding-bottom: 180px;
 }

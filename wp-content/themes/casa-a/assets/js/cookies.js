@@ -106,6 +106,10 @@
 		estado.hidden = false;
 	}
 
+	function mostrar() {
+		banner.hidden = false;
+	}
+
 	function ocultar() {
 		banner.hidden = true;
 	}
@@ -135,11 +139,11 @@
 
 	pintarEstado();
 
+	// La analítica sigue la última decisión guardada; el banner se muestra en cada visita hasta aceptar o rechazar.
 	if (vigente && vigente.decision === 'aceptado') {
 		activarAnalitica();
-	} else if (!vigente) {
-		banner.hidden = false;
 	}
+	mostrar();
 
 	banner.querySelector('[data-cookies-aceptar]').addEventListener('click', aceptar);
 	banner.querySelector('[data-cookies-rechazar]').addEventListener('click', rechazar);
@@ -148,7 +152,7 @@
 		if (evento.target.closest('[data-cookies-abrir]')) {
 			evento.preventDefault();
 			pintarEstado();
-			banner.hidden = false;
+			mostrar();
 			banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
 			banner.querySelector('[data-cookies-aceptar]').focus();
 		}
