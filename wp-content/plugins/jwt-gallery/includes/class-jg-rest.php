@@ -1411,40 +1411,79 @@ class JG_REST {
 			return new WP_Error( 'jg_category_not_found', 'La categoría no existe.', array( 'status' => 404 ) );
 		}
 
-		// Eliminar también las piezas publicadas de la categoría para que la
-		// categoría desaparezca por completo del catálogo (pestaña y piezas),
-		// incluidos sus archivos locales en wp-content/uploads/jg-gallery/.
-		$query = new WP_Query(
-			array(
-				'post_type'      => 'jg_gallery_image',
-				'post_status'    => 'any',
-				'posts_per_page' => -1,
-				'fields'         => 'ids',
-				'no_found_rows'  => true,
-				'tax_query'      => array(
-					array(
-						'taxonomy' => JG_CPT::TAXONOMY,
-						'field'    => 'term_id',
-						'terms'    => $term_id,
+		// Regla: al eliminar una categoría se eliminan también todas sus subcategorías y sus piezas,
+		// incluidos los archivos locales en wp-content/uploads/jg-gallery/. No queda nada huérfano.
+		$ids       = array( $term_id );
+		$pendiente = array( $term_id );
+
+		while ( $pendiente ) {
+			$padre = array_shift( $pendiente );
+			$hijos = get_terms(
+				array(
+					'taxonomy'   => JG_CPT::TAXONOMY,
+					'hide_empty' => false,
+					'parent'     => $padre,
+					'fields'     => 'ids',
+				)
+			);
+
+			if ( is_wp_error( $hijos ) ) {
+				$hijos = array();
+			}
+
+			foreach ( $hijos as $hijo ) {
+				$ids[]     = (int) $hijo;
+				$pendiente[] = (int) $hijo;
+			}
+		}
+
+		$piezas_eliminadas = 0;
+
+		foreach ( $ids as $id ) {
+			$query = new WP_Query(
+				array(
+					'post_type'      => 'jg_gallery_image',
+					'post_status'    => 'any',
+					'posts_per_page' => -1,
+					'fields'         => 'ids',
+					'no_found_rows'  => true,
+					'tax_query'      => array(
+						array(
+							'taxonomy' => JG_CPT::TAXONOMY,
+							'field'    => 'term_id',
+							'terms'    => $id,
+						),
 					),
-				),
+				)
+			);
+
+			foreach ( $query->posts as $post_id ) {
+				$urls = get_post_meta( $post_id, '_jg_image_url', false );
+				if ( is_array( $urls ) ) {
+					self::delete_local_images( $urls );
+				}
+				wp_delete_post( $post_id, true );
+			}
+
+			$piezas_eliminadas += count( $query->posts );
+		}
+
+		// Primero las subcategorías y al final la categoría principal.
+		foreach ( array_reverse( $ids ) as $id ) {
+			$resultado = wp_delete_term( $id, JG_CPT::TAXONOMY );
+
+			if ( is_wp_error( $resultado ) || false === $resultado ) {
+				return new WP_Error( 'jg_category_failed', 'No se pudo eliminar la categoría.', array( 'status' => 500 ) );
+			}
+		}
+
+		return rest_ensure_response(
+			array(
+				'deleted'            => true,
+				'id'                 => $term_id,
+				'subcategories_deleted' => count( $ids ) - 1,
+				'pieces_deleted'     => $piezas_eliminadas,
 			)
 		);
-
-		foreach ( $query->posts as $post_id ) {
-			$urls = get_post_meta( $post_id, '_jg_image_url', false );
-			if ( is_array( $urls ) ) {
-				self::delete_local_images( $urls );
-			}
-			wp_delete_post( $post_id, true );
-		}
-
-		$result = wp_delete_term( $term_id, JG_CPT::TAXONOMY );
-
-		if ( is_wp_error( $result ) || false === $result ) {
-			return new WP_Error( 'jg_category_failed', 'No se pudo eliminar la categoría.', array( 'status' => 500 ) );
-		}
-
-		return rest_ensure_response( array( 'deleted' => true, 'id' => $term_id, 'pieces_deleted' => count( $query->posts ) ) );
 	}
 }

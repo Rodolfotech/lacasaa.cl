@@ -97,7 +97,7 @@ Estos cambios se hicieron en esta copia y no existen en el original de todoacril
 
 Plugin de WordPress que permite iniciar sesión mediante JWT (correo + contraseña) y gestionar una galería de imágenes organizada por categorías: subir, editar, eliminar y categorizar imágenes desde un panel autenticado, con una galería pública de solo lectura.
 
-- **Versión:** 2.1.5 (2026-11-27; ver §14). Producción: pendiente de subir `jwt-gallery-2.1.5.zip`.
+- **Versión:** 2.1.6 (2026-11-27; ver §14). Producción: pendiente de subir `jwt-gallery-2.1.6.zip`.
 - **Namespace REST:** `jwt-gallery/v1`
 - **Requiere:** PHP 7.2.24+, WordPress con usuarios ya existentes (usa la tabla `wp_users`)
 - **Ubicación:** `wp-content/plugins/jwt-gallery/`
@@ -4382,7 +4382,7 @@ Clic en **Cerrar sesión** (barra superior) → se borra la sesión local y el n
 
 ---
 
-## 14. Estado actual de `jwt-gallery` en lacasaa.cl (versión 2.1.5, 2026-11-27)
+## 14. Estado actual de `jwt-gallery` en lacasaa.cl (versión 2.1.6, 2026-11-27)
 
 Esta sección resume lo que hace el plugin hoy en lacasaa.cl. Las secciones anteriores describen el plugin original (proyecto3).
 
@@ -4425,7 +4425,7 @@ Esta sección resume lo que hace el plugin hoy en lacasaa.cl. Las secciones ante
 - **Nombres de categoría:** principales en MAYÚSCULAS; subcategorías con la primera letra en mayúscula y el resto en minúscula (`categoria_formato()` en `class-jg-rest.php`). El campo de categoría principal muestra mayúsculas mientras se escribe (CSS).
 - **Espejo:** la copia en el catálogo se busca por nombre dentro del mismo padre. `casa_a_categorias_del_plugin()` solo devuelve copias cuya categoría del panel existe, así que una categoría borrada desaparece del theme.
 - **Sincronización de productos:** se quitó un bloque de stock repetido en `sync-galeria.php`.
-- **Versiones:** 2.1.0 (catálogo integrado), 2.1.1 y 2.1.2 (correcciones del espejo y de categorías borradas), 2.1.3 (formato de nombres), 2.1.4 y 2.1.5 (ver abajo).
+- **Versiones:** 2.1.0 (catálogo integrado), 2.1.1 y 2.1.2 (correcciones del espejo y de categorías borradas), 2.1.3 (formato de nombres), 2.1.4, 2.1.5 y 2.1.6 (ver abajo).
 
 ### Cambios de las versiones 2.1.4 y 2.1.5 (2026-11-27)
 
@@ -4436,3 +4436,8 @@ Esta sección resume lo que hace el plugin hoy en lacasaa.cl. Las secciones ante
 - **Subida con la conexión cortada:** si la conexión se pierde al publicar, el mensaje dice que la pieza podría haberse guardado y la galería se recarga. Antes decía "Error de red" y reactivaba el botón, lo que llevaba a publicar dos veces.
 - **Datos del modal de producto** (`includes/catalogo/producto-extra.php`, `casa_a_producto_datos_modal()`): ahora incluye `disponible` (de `casa_a_disponible`) y `descripcion` (contenido del producto sin HTML). El tema los usa en el modal de la galería.
 - **Versiones:** 2.1.4 (límites, popovers, datos del modal), 2.1.5 (descripción de 82 sin espacios, validación solo al cambiar la descripción, CSS de la casilla).
+
+### Cambios de la versión 2.1.6 (2026-11-27)
+
+- **Eliminar una categoría es recursivo (regla del negocio):** `delete_category()` recorre todas las subcategorías de la categoría, borra las piezas de cada una junto con sus archivos locales (`uploads/jg-gallery/`), y después elimina los términos de abajo hacia arriba (subcategorías primero, principal al final). Nada queda huérfano. El espejo del catálogo se actualiza con `deleted_term`. La respuesta incluye `subcategories_deleted` y `pieces_deleted`.
+- **Verificación pendiente:** no se probó borrando una categoría con subcategorías en un entorno con datos reales. Probar en local antes de subir.

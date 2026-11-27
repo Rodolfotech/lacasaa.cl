@@ -102,9 +102,21 @@ function casa_a_enqueue_reserva() {
 		return;
 	}
 
-	wp_enqueue_script( 'casa-a-reserva', get_template_directory_uri() . '/assets/js/reserva.js', array( 'casa-a-paginacion' ), wp_get_theme()->get( 'Version' ), true );
+	wp_enqueue_script( 'casa-a-reserva', get_template_directory_uri() . '/assets/js/reserva.js', array( 'casa-a-paginacion', 'casa-a-validacion' ), wp_get_theme()->get( 'Version' ), true );
 }
 add_action( 'wp_enqueue_scripts', 'casa_a_enqueue_reserva' );
+
+/**
+ * Validación por campo (mensaje debajo de cada campo) para Mi reserva y Contacto.
+ */
+function casa_a_enqueue_validacion() {
+	if ( ! is_page_template( 'template-mi-reserva.php' ) && ! is_page( 'contacto' ) ) {
+		return;
+	}
+
+	wp_enqueue_script( 'casa-a-validacion', get_template_directory_uri() . '/assets/js/validacion-campos.js', array(), wp_get_theme()->get( 'Version' ), true );
+}
+add_action( 'wp_enqueue_scripts', 'casa_a_enqueue_validacion' );
 
 /**
  * Analítica (GTM y Clarity) solo en páginas públicas; nunca en el panel privado de galería.
@@ -179,7 +191,7 @@ function casa_a_menu_fallback() {
  * @return bool
  */
 function casa_a_email_valido( $email ) {
-	if ( ! is_email( $email ) || strlen( $email ) > 254 ) {
+	if ( ! is_email( $email ) || strlen( $email ) > 50 ) {
 		return false;
 	}
 
@@ -205,6 +217,16 @@ function casa_a_contacto_procesar() {
 
 	$destino = wp_get_referer() ? wp_get_referer() : home_url( '/contacto/' );
 
+	// Límite de envíos: un mensaje cada 5 minutos por dirección IP.
+	$casa_a_ip     = isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : '';
+	$casa_a_espera = 'casa_a_espera_contacto_' . md5( $casa_a_ip );
+	$casa_a_hasta  = (int) get_transient( $casa_a_espera );
+
+	if ( $casa_a_hasta > time() ) {
+		wp_safe_redirect( add_query_arg( array( 'casa_a_estado' => 'espera', 'casa_a_restante' => $casa_a_hasta - time() ), $destino ) );
+		exit;
+	}
+
 	// Campo trampa anti-spam: los humanos no lo llenan.
 	if ( ! empty( $_POST['sitio_web'] ) ) {
 		wp_safe_redirect( add_query_arg( 'casa_a_estado', 'ok', $destino ) );
@@ -220,17 +242,37 @@ function casa_a_contacto_procesar() {
 
 	$email       = isset( $_POST['email'] ) ? strtolower( sanitize_email( wp_unslash( $_POST['email'] ) ) ) : '';
 	$descripcion = isset( $_POST['descripcion'] ) ? sanitize_textarea_field( wp_unslash( $_POST['descripcion'] ) ) : '';
-	$promociones = ! empty( $_POST['promociones'] ) ? 'Sí' : 'No';
 
 	$largo_nombre      = function_exists( 'mb_strlen' ) ? mb_strlen( $nombre ) : strlen( $nombre );
 	$largo_descripcion = function_exists( 'mb_strlen' ) ? mb_strlen( $descripcion ) : strlen( $descripcion );
 
-	if ( $largo_nombre < 3 || $largo_nombre > 25 || ! casa_a_email_valido( $email ) || '' === $descripcion || $largo_descripcion > 2000 || empty( $_POST['privacidad'] ) || ( strlen( $telefono_digitos ) && ( 8 !== strlen( $telefono_digitos ) || in_array( $telefono_digitos[0], array( '1', '2' ), true ) ) ) ) {
-		wp_safe_redirect( add_query_arg( 'casa_a_estado', 'error', $destino ) );
+	// Cada campo rechazado se indica por su nombre (casa_a_campo) para mostrarlo y marcarlo.
+	$error = function ( $campo ) use ( $destino ) {
+		wp_safe_redirect( add_query_arg( array( 'casa_a_estado' => 'error', 'casa_a_campo' => $campo ), $destino ) );
 		exit;
+	};
+
+	if ( $largo_nombre < 3 || $largo_nombre > 25 ) {
+		$error( 'nombre' );
 	}
 
-	$asunto = sprintf( __( 'Nueva cotización desde lacasaa.cl: %s', 'casa-a' ), $nombre );
+	if ( ! casa_a_email_valido( $email ) ) {
+		$error( 'email' );
+	}
+
+	if ( 8 !== strlen( $telefono_digitos ) || in_array( $telefono_digitos[0], array( '1', '2' ), true ) ) {
+		$error( 'telefono' );
+	}
+
+	if ( '' === $descripcion || $largo_descripcion > 2000 ) {
+		$error( 'descripcion' );
+	}
+
+	if ( empty( $_POST['privacidad'] ) ) {
+		$error( 'privacidad' );
+	}
+
+	$asunto = sprintf( __( 'Nuevo mensaje de contacto desde lacasaa.cl: %s', 'casa-a' ), $nombre );
 	$cuerpo = casa_a_correo_plantilla(
 		__( 'Nuevo mensaje de contacto', 'casa-a' ),
 		casa_a_correo_seccion(
@@ -240,15 +282,18 @@ function casa_a_contacto_procesar() {
 					__( 'Nombre', 'casa-a' )      => esc_html( $nombre ),
 					__( 'Teléfono', 'casa-a' )    => casa_a_correo_telefono( trim( $pais . ' ' . $telefono ) ),
 					__( 'Correo', 'casa-a' )      => casa_a_correo_enlace( $email ),
-					__( 'Promociones', 'casa-a' ) => esc_html( $promociones ),
 				)
 			)
 		)
-		. casa_a_correo_seccion( __( 'Descripción del proyecto', 'casa-a' ), casa_a_correo_texto( $descripcion ) )
+		. casa_a_correo_seccion( __( 'Mensaje', 'casa-a' ), casa_a_correo_texto( $descripcion ) )
 	);
 	$cabeceras = array( 'Reply-To: ' . $nombre . ' <' . $email . '>', 'Content-Type: text/html; charset=UTF-8' );
 
 	$enviado = wp_mail( 'hola@lacasaa.cl', $asunto, $cuerpo, $cabeceras );
+
+	if ( $enviado ) {
+		set_transient( $casa_a_espera, time() + 5 * MINUTE_IN_SECONDS, 5 * MINUTE_IN_SECONDS );
+	}
 
 	wp_safe_redirect( add_query_arg( 'casa_a_estado', $enviado ? 'ok' : 'fallo', $destino ) );
 	exit;
@@ -306,8 +351,19 @@ function casa_a_cotizacion_procesar() {
 		exit;
 	}
 
-	$error = function () use ( $destino ) {
-		wp_safe_redirect( add_query_arg( 'casa_a_cotizacion', 'error', $destino ) );
+	// Límite de envíos: una solicitud cada 5 minutos por dirección IP (guarda la hora en que se puede volver a enviar).
+	$casa_a_ip     = isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : '';
+	$casa_a_espera = 'casa_a_espera_' . md5( $casa_a_ip );
+	$casa_a_hasta  = (int) get_transient( $casa_a_espera );
+
+	if ( $casa_a_hasta > time() ) {
+		wp_safe_redirect( add_query_arg( array( 'casa_a_cotizacion' => 'espera', 'casa_a_restante' => $casa_a_hasta - time() ), $destino ) );
+		exit;
+	}
+
+	// Indica al formulario qué campo falló (casa_a_campo) para mostrarlo y marcarlo.
+	$error = function ( $campo = '' ) use ( $destino ) {
+		wp_safe_redirect( add_query_arg( array( 'casa_a_cotizacion' => 'error', 'casa_a_campo' => $campo ), $destino ) );
 		exit;
 	};
 
@@ -332,24 +388,48 @@ function casa_a_cotizacion_procesar() {
 
 	$largo_proyecto = function_exists( 'mb_strlen' ) ? mb_strlen( $nombre_proyecto ) : strlen( $nombre_proyecto );
 
-	if ( $largo_nombre < 3 || $largo_nombre > 25 || $largo_proyecto < 1 || $largo_proyecto > 25 || strlen( $email ) > 35 || strlen( $email ) > 35 || ! casa_a_email_valido( $email ) || ! $condiciones || ! $privacidad || ( function_exists( 'mb_strlen' ) ? mb_strlen( $comentarios ) : strlen( $comentarios ) ) > 2000 || ( strlen( $telefono_digitos ) && ( 8 !== strlen( $telefono_digitos ) || in_array( $telefono_digitos[0], array( '1', '2' ), true ) ) ) ) {
-		$error();
+	if ( $largo_nombre < 3 || $largo_nombre > 25 ) {
+		$error( 'nombre' );
 	}
 
-	foreach ( array( $retiro, $devolucion ) as $fecha ) {
+	if ( $largo_proyecto < 1 || $largo_proyecto > 25 ) {
+		$error( 'nombre_proyecto' );
+	}
+
+	if ( strlen( $email ) > 50 || ! casa_a_email_valido( $email ) ) {
+		$error( 'email' );
+	}
+
+	if ( 8 !== strlen( $telefono_digitos ) || in_array( $telefono_digitos[0], array( '1', '2' ), true ) ) {
+		$error( 'telefono' );
+	}
+
+	if ( '' === trim( $comentarios ) || ( function_exists( 'mb_strlen' ) ? mb_strlen( $comentarios ) : strlen( $comentarios ) ) > 2000 ) {
+		$error( 'comentarios' );
+	}
+
+	foreach ( array( 'fecha_retiro' => $retiro, 'fecha_devolucion' => $devolucion ) as $campo => $fecha ) {
 		if ( ! preg_match( '/^(\d{4})-(\d{2})-(\d{2})$/', $fecha, $partes ) || ! checkdate( (int) $partes[2], (int) $partes[3], (int) $partes[1] ) ) {
-			$error();
+			$error( $campo );
 		}
 	}
 
 	if ( $devolucion < $retiro ) {
-		$error();
+		$error( 'fecha_devolucion' );
+	}
+
+	if ( ! $condiciones ) {
+		$error( 'condiciones' );
+	}
+
+	if ( ! $privacidad ) {
+		$error( 'privacidad' );
 	}
 
 	$items = isset( $_POST['items'] ) ? json_decode( wp_unslash( $_POST['items'] ), true ) : null;
 
 	if ( ! is_array( $items ) ) {
-		$error();
+		$error( 'reserva' );
 	}
 
 	$productos = array();
@@ -393,7 +473,7 @@ function casa_a_cotizacion_procesar() {
 	}
 
 	if ( empty( $productos ) ) {
-		$error();
+		$error( 'reserva' );
 	}
 
 	$dias = (int) ( ( strtotime( $devolucion ) - strtotime( $retiro ) ) / DAY_IN_SECONDS ) + 1;
@@ -454,7 +534,7 @@ function casa_a_cotizacion_procesar() {
 				)
 			)
 		)
-		. casa_a_correo_seccion( __( 'Comentarios', 'casa-a' ), casa_a_correo_texto( $comentarios ) )
+		. casa_a_correo_seccion( __( 'Mensaje', 'casa-a' ), casa_a_correo_texto( $comentarios ) )
 		. casa_a_correo_seccion( __( 'Productos', 'casa-a' ), $tabla_productos . $total_html )
 	);
 
@@ -468,6 +548,10 @@ function casa_a_cotizacion_procesar() {
 	);
 
 	unset( $GLOBALS['casa_a_correo_imagenes'] );
+
+	if ( $enviado ) {
+		set_transient( $casa_a_espera, time() + 5 * MINUTE_IN_SECONDS, 5 * MINUTE_IN_SECONDS );
+	}
 
 	wp_safe_redirect( add_query_arg( 'casa_a_cotizacion', $enviado ? 'ok' : 'fallo', $destino ) );
 	exit;
@@ -938,3 +1022,18 @@ function casa_a_enqueue_buscador() {
 	wp_enqueue_script( 'casa-a-buscador', get_template_directory_uri() . '/assets/js/buscador.js', array(), wp_get_theme()->get( 'Version' ), true );
 }
 add_action( 'wp_enqueue_scripts', 'casa_a_enqueue_buscador' );
+
+/**
+ * URL del logo (assets/img/Logo.jpeg o LOGO.jpeg). Se añade la fecha de modificación del archivo
+ * para que el navegador vea el logo nuevo aunque conserve el mismo nombre.
+ *
+ * @return string
+ */
+function casa_a_logo_url() {
+	$carpeta = get_template_directory() . '/assets/img/';
+	$nombre  = file_exists( $carpeta . 'Logo.jpeg' ) ? 'Logo.jpeg' : 'LOGO.jpeg';
+	$ruta    = $carpeta . $nombre;
+	$version = file_exists( $ruta ) ? filemtime( $ruta ) : wp_get_theme()->get( 'Version' );
+
+	return get_template_directory_uri() . '/assets/img/' . $nombre . '?v=' . $version;
+}

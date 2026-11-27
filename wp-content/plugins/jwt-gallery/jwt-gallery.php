@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       CASA A Panel
  * Description:       Login por JWT (correo + contraseña) y galería de imágenes por categorías, con edición y borrado. Shortcode [jwt_gallery] para el login y [jwt_gallery_panel] para el panel autenticado.
- * Version:           2.1.5
+ * Version:           2.1.6
  * Requires at least: 6.0
  * Requires PHP:      7.2.24
  * Author:            CASA A
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'JG_VERSION', '2.1.5' );
+define( 'JG_VERSION', '2.1.6' );
 define( 'JG_PATH', plugin_dir_path( __FILE__ ) );
 define( 'JG_URL', plugin_dir_url( __FILE__ ) );
 

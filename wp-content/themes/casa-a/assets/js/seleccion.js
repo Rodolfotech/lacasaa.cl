@@ -370,6 +370,11 @@
 	}
 
 	function revisarRespuesta() {
+		// En la página "Mi reserva" el resultado lo muestra el propio formulario (reserva.js).
+		if (document.querySelector('[data-reserva-form]')) {
+			return;
+		}
+
 		var parametros = new URLSearchParams(window.location.search);
 		var estado = parametros.get('casa_a_cotizacion');
 

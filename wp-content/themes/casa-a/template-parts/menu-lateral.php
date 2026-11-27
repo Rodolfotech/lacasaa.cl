@@ -79,28 +79,31 @@ function casa_a_menu_enlace_categoria( $nombre ) {
 		<button type="button" class="casa-a-menu-cerrar" data-menu-cerrar aria-label="<?php esc_attr_e( 'Cerrar menú', 'casa-a' ); ?>">
 			<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
 		</button>
-		<span class="casa-a-menu-titulo"><?php esc_html_e( 'Muebles', 'casa-a' ); ?></span>
 	</div>
 
 	<nav class="casa-a-menu-lista" aria-label="<?php esc_attr_e( 'Categorías', 'casa-a' ); ?>">
 		<a class="casa-a-menu-ver-todo" href="<?php echo esc_url( home_url( '/producto/' ) ); ?>"><?php esc_html_e( 'Ver todo', 'casa-a' ); ?></a>
 
 		<?php foreach ( $casa_a_menu_grupos as $casa_a_grupo => $casa_a_datos ) : ?>
-			<div class="casa-a-menu-grupo">
-				<?php if ( $casa_a_datos['subs'] ) : ?>
-					<h2 class="casa-a-menu-grupo-titulo"><?php echo esc_html( $casa_a_grupo ); ?></h2>
-					<?php foreach ( $casa_a_datos['subs'] as $casa_a_term ) : ?>
-						<a href="<?php echo esc_url( add_query_arg( 'categoria', $casa_a_term->slug, home_url( '/producto/' ) ) ); ?>"><?php echo esc_html( wp_specialchars_decode( $casa_a_term->name, ENT_QUOTES ) ); ?></a>
-					<?php endforeach; ?>
-				<?php else : ?>
+			<?php if ( $casa_a_datos['subs'] ) : ?>
+				<div class="casa-a-menu-grupo" data-menu-grupo>
+					<button type="button" class="casa-a-menu-grupo-titulo" data-menu-abrir aria-expanded="false">
+						<span><?php echo esc_html( $casa_a_grupo ); ?></span>
+						<span class="casa-a-menu-flecha" aria-hidden="true">&rsaquo;</span>
+					</button>
+					<div class="casa-a-menu-subs" data-menu-subs hidden>
+						<button type="button" class="casa-a-menu-volver" data-menu-volver><span aria-hidden="true">&lsaquo;</span> <?php echo esc_html( $casa_a_grupo ); ?></button>
+						<?php foreach ( $casa_a_datos['subs'] as $casa_a_term ) : ?>
+							<a href="<?php echo esc_url( add_query_arg( 'categoria', $casa_a_term->slug, home_url( '/producto/' ) ) ); ?>"><?php echo esc_html( wp_specialchars_decode( $casa_a_term->name, ENT_QUOTES ) ); ?></a>
+						<?php endforeach; ?>
+					</div>
+				</div>
+			<?php else : ?>
+				<div class="casa-a-menu-grupo">
 					<a class="casa-a-menu-grupo-titulo" href="<?php echo esc_url( add_query_arg( 'categoria', $casa_a_datos['principal']->slug, home_url( '/producto/' ) ) ); ?>"><?php echo esc_html( $casa_a_grupo ); ?></a>
-				<?php endif; ?>
-			</div>
+				</div>
+			<?php endif; ?>
 		<?php endforeach; ?>
 
-		<span class="casa-a-menu-separador" aria-hidden="true"></span>
-
-		<a href="<?php echo esc_url( home_url( '/en-accion/' ) ); ?>"><?php esc_html_e( 'Galería', 'casa-a' ); ?></a>
-		<a href="<?php echo esc_url( home_url( '/casa-a/' ) ); ?>"><?php esc_html_e( 'Quiénes somos', 'casa-a' ); ?></a>
 	</nav>
 </aside>

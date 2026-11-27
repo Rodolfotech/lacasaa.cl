@@ -38,6 +38,8 @@
 			if (!modal.classList.contains('is-open')) {
 				modal.hidden = true;
 				fondo.hidden = true;
+				// Avisa a otros scripts que el modal ya se cerró (para mostrar otro aviso después).
+				document.dispatchEvent(new CustomEvent('casaa:aviso-cerrado'));
 			}
 		}, 250);
 	}
