@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       CASA A Panel
  * Description:       Login por JWT (correo + contraseña) y galería de imágenes por categorías, con edición y borrado. Shortcode [jwt_gallery] para el login y [jwt_gallery_panel] para el panel autenticado.
- * Version:           2.0.29
+ * Version:           2.1.3
  * Requires at least: 6.0
  * Requires PHP:      7.2.24
  * Author:            CASA A
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'JG_VERSION', '2.0.29' );
+define( 'JG_VERSION', '2.1.3' );
 define( 'JG_PATH', plugin_dir_path( __FILE__ ) );
 define( 'JG_URL', plugin_dir_url( __FILE__ ) );
 
@@ -24,6 +24,12 @@ require_once JG_PATH . 'includes/class-jg-cpt.php';
 require_once JG_PATH . 'includes/class-jg-shortcode.php';
 require_once JG_PATH . 'includes/class-jg-template.php';
 require_once JG_PATH . 'includes/class-jg-settings.php';
+
+// Catálogo de productos (antes plugin aparte casa-a-catalogo): va dentro de este mismo plugin.
+require_once JG_PATH . 'includes/catalogo/catalogo.php';
+require_once JG_PATH . 'includes/catalogo/sync-galeria.php';
+require_once JG_PATH . 'includes/catalogo/espejo-categorias.php';
+require_once JG_PATH . 'includes/catalogo/producto-extra.php';
 
 JG_CPT::init();
 JG_REST::init();
@@ -55,6 +61,7 @@ register_activation_hook(
 		JG_JWT::get_secret();
 		JG_CPT::register();
 		JG_CPT::seed_default_categories();
+		casa_a_catalogo_register();
 		flush_rewrite_rules();
 	}
 );

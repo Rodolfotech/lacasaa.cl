@@ -1232,3 +1232,8 @@ body.jg-blank-page {
 .jg-gallery button {
 	font-family: "Cascadia Code", ui-monospace, monospace;
 }
+
+/* Categorías principales: se escriben en mayúsculas. */
+[data-jg-category-add] input[name="name"] {
+	text-transform: uppercase;
+}

@@ -206,21 +206,6 @@
 		}
 	});
 
-	// Cantidad escrita: solo dígitos; al salir del campo se ajusta entre 1 y el máximo.
-	document.addEventListener('input', function (evento) {
-		if (evento.target.matches('[data-modal-cantidad]')) {
-			evento.target.value = evento.target.value.replace(/\D/g, '');
-		}
-	});
-
-	document.addEventListener('change', function (evento) {
-		if (evento.target.matches('[data-modal-cantidad]')) {
-			var valor = parseInt(evento.target.value, 10);
-			cantidad = isNaN(valor) ? 1 : Math.min(maximo(), Math.max(1, valor));
-			pintarCantidad();
-		}
-	});
-
 	function iniciar() {
 		modal = document.querySelector('.casa-a-modal');
 		fondo = document.querySelector('.casa-a-modal-fondo');

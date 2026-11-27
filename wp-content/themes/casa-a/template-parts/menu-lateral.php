@@ -48,8 +48,11 @@ if ( function_exists( 'casa_a_categorias_del_plugin' ) ) {
 			}
 		);
 
-		// Sin subcategorías, la principal es el único enlace del grupo.
-		$casa_a_menu_grupos[ wp_specialchars_decode( $casa_a_principal->name, ENT_QUOTES ) ] = $casa_a_subs ? $casa_a_subs : array( $casa_a_principal );
+		// Sin subcategorías, la principal se muestra una sola vez como enlace (no como subcategoría).
+		$casa_a_menu_grupos[ wp_specialchars_decode( $casa_a_principal->name, ENT_QUOTES ) ] = array(
+			'principal' => $casa_a_principal,
+			'subs'      => $casa_a_subs,
+		);
 	}
 }
 
@@ -82,12 +85,16 @@ function casa_a_menu_enlace_categoria( $nombre ) {
 	<nav class="casa-a-menu-lista" aria-label="<?php esc_attr_e( 'Categorías', 'casa-a' ); ?>">
 		<a class="casa-a-menu-ver-todo" href="<?php echo esc_url( home_url( '/producto/' ) ); ?>"><?php esc_html_e( 'Ver todo', 'casa-a' ); ?></a>
 
-		<?php foreach ( $casa_a_menu_grupos as $casa_a_grupo => $casa_a_subcategorias ) : ?>
+		<?php foreach ( $casa_a_menu_grupos as $casa_a_grupo => $casa_a_datos ) : ?>
 			<div class="casa-a-menu-grupo">
-				<h2 class="casa-a-menu-grupo-titulo"><?php echo esc_html( $casa_a_grupo ); ?></h2>
-				<?php foreach ( $casa_a_subcategorias as $casa_a_term ) : ?>
-					<a href="<?php echo esc_url( add_query_arg( 'categoria', $casa_a_term->slug, home_url( '/producto/' ) ) ); ?>"><?php echo esc_html( wp_specialchars_decode( $casa_a_term->name, ENT_QUOTES ) ); ?></a>
-				<?php endforeach; ?>
+				<?php if ( $casa_a_datos['subs'] ) : ?>
+					<h2 class="casa-a-menu-grupo-titulo"><?php echo esc_html( $casa_a_grupo ); ?></h2>
+					<?php foreach ( $casa_a_datos['subs'] as $casa_a_term ) : ?>
+						<a href="<?php echo esc_url( add_query_arg( 'categoria', $casa_a_term->slug, home_url( '/producto/' ) ) ); ?>"><?php echo esc_html( wp_specialchars_decode( $casa_a_term->name, ENT_QUOTES ) ); ?></a>
+					<?php endforeach; ?>
+				<?php else : ?>
+					<a class="casa-a-menu-grupo-titulo" href="<?php echo esc_url( add_query_arg( 'categoria', $casa_a_datos['principal']->slug, home_url( '/producto/' ) ) ); ?>"><?php echo esc_html( $casa_a_grupo ); ?></a>
+				<?php endif; ?>
 			</div>
 		<?php endforeach; ?>
 

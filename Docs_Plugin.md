@@ -4382,7 +4382,7 @@ Clic en **Cerrar sesión** (barra superior) → se borra la sesión local y el n
 
 ---
 
-## 14. Estado actual de `jwt-gallery` en lacasaa.cl (versión 2.0.29, 2026-11-27)
+## 14. Estado actual de `jwt-gallery` en lacasaa.cl (versión 2.1.3, 2026-11-27)
 
 Esta sección resume lo que hace el plugin hoy en lacasaa.cl. Las secciones anteriores describen el plugin original (proyecto3).
 
@@ -4399,7 +4399,7 @@ Esta sección resume lo que hace el plugin hoy en lacasaa.cl. Las secciones ante
 - **Renombrar y eliminar:** desde la lista. Eliminar una categoría borra sus piezas (se pide confirmación).
 - **Buscador:** filtra solo subcategorías, en la lista y en las pestañas, sin tildes ni mayúsculas.
 - **Respuesta de la API:** cada categoría trae `parent` y `path` ("Padre › Hijo"), con los nombres sin entidades HTML.
-- **Espejo en el catálogo:** cada cambio en las categorías lo recoge el plugin `casa-a-catalogo` (ver `AGENT.md`).
+- **Espejo en el catálogo:** cada cambio en las categorías se copia a `categoria_producto` (código en `includes/catalogo/espejo-categorias.php`). Al eliminar una categoría del panel, su copia deja de mostrarse en el theme.
 
 ### Piezas
 
@@ -4417,3 +4417,12 @@ Esta sección resume lo que hace el plugin hoy en lacasaa.cl. Las secciones ante
 - Disponibilidad ("No disponible") y reordenado de imágenes.
 - Estilo alineado con el theme: paleta, Cascadia Code, esquinas rectas, botones negros con mayúsculas.
 - Versiones: `JG_VERSION` sube en cada cambio para que el navegador cargue los archivos nuevos.
+
+### Cambios de las versiones 2.1.x
+
+- **Catálogo integrado:** el código del antiguo plugin `casa-a-catalogo` está en `includes/catalogo/` (catalogo.php, sync-galeria.php, espejo-categorias.php, producto-extra.php). No instales `casa-a-catalogo` junto a este plugin: las funciones se repiten y PHP falla.
+- **Activación:** crea el tipo `producto` y reescribe los permalinks. Si reemplazas el plugin sin desactivarlo, guarda **Ajustes → Enlaces permanentes**.
+- **Nombres de categoría:** principales en MAYÚSCULAS; subcategorías con la primera letra en mayúscula y el resto en minúscula (`categoria_formato()` en `class-jg-rest.php`). El campo de categoría principal muestra mayúsculas mientras se escribe (CSS).
+- **Espejo:** la copia en el catálogo se busca por nombre dentro del mismo padre. `casa_a_categorias_del_plugin()` solo devuelve copias cuya categoría del panel existe, así que una categoría borrada desaparece del theme.
+- **Sincronización de productos:** se quitó un bloque de stock repetido en `sync-galeria.php`.
+- **Versiones:** 2.1.0 (catálogo integrado), 2.1.1 y 2.1.2 (correcciones del espejo y de categorías borradas), 2.1.3 (formato de nombres).

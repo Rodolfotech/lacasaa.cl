@@ -1267,6 +1267,22 @@ class JG_REST {
 		return null;
 	}
 
+	/**
+	 * Formato del nombre: categorías principales en MAYÚSCULAS; subcategorías con
+	 * la primera letra en mayúscula y el resto en minúscula.
+	 */
+	private static function categoria_formato( $nombre, $es_subcategoria ) {
+		if ( ! $es_subcategoria ) {
+			return function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $nombre, 'UTF-8' ) : strtoupper( $nombre );
+		}
+
+		if ( function_exists( 'mb_strtolower' ) ) {
+			return mb_strtoupper( mb_substr( $nombre, 0, 1, 'UTF-8' ), 'UTF-8' ) . mb_strtolower( mb_substr( $nombre, 1, null, 'UTF-8' ), 'UTF-8' );
+		}
+
+		return ucfirst( strtolower( $nombre ) );
+	}
+
 	public static function create_category( WP_REST_Request $request ) {
 		$user = self::authenticated_user( $request );
 		if ( is_wp_error( $user ) ) {
@@ -1285,6 +1301,7 @@ class JG_REST {
 
 		// Subcategoría: el padre debe ser una categoría principal (un solo nivel).
 		$parent_id = absint( $request->get_param( 'parent_id' ) );
+		$name      = self::categoria_formato( $name, $parent_id > 0 );
 
 		if ( $parent_id ) {
 			$padre = get_term( $parent_id, JG_CPT::TAXONOMY );
@@ -1333,6 +1350,7 @@ class JG_REST {
 
 		// Mover: parent_id nuevo (0 = principal). Si no se envía, se mantiene el actual.
 		$nuevo_padre = $request->has_param( 'parent_id' ) ? absint( $request->get_param( 'parent_id' ) ) : (int) $term->parent;
+		$name        = self::categoria_formato( $name, $nuevo_padre > 0 );
 
 		if ( $nuevo_padre ) {
 			$padre = get_term( $nuevo_padre, JG_CPT::TAXONOMY );

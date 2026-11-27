@@ -56,7 +56,7 @@ function casa_a_galeria_categoria_catalogo( $nombre, $nombre_padre = '' ) {
 			continue;
 		}
 
-		if ( '' === $nombre_padre || (int) $termino->parent === $id_padre ) {
+		if ( (int) $termino->parent === $id_padre ) {
 			return (int) $termino->term_id;
 		}
 	}
@@ -164,14 +164,6 @@ function casa_a_galeria_sincronizar( $galeria_id, $galeria ) {
 
 	if ( $precio_dia > 0 ) {
 		update_post_meta( $producto_id, 'casa_a_precio_dia', $precio_dia );
-	}
-
-	// Cantidad: unidades disponibles. Si la galería no la trae, se conserva la del catálogo.
-	$cantidad = get_post_meta( $galeria_id, '_jg_cantidad', true );
-
-	if ( '' !== (string) $cantidad ) {
-		update_post_meta( $producto_id, 'casa_a_stock', absint( $cantidad ) );
-		update_post_meta( $producto_id, 'casa_a_disponible', absint( $cantidad ) > 0 ? '1' : '0' );
 	}
 
 	// Cantidad: unidades disponibles. Si la galería no la trae, se conserva la del catálogo.

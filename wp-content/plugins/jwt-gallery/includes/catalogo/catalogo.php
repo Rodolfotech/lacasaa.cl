@@ -1,12 +1,8 @@
 <?php
 /**
- * Plugin Name: CASA A Catálogo
- * Description: Catálogo de productos y categorías de CASA A (renta de mobiliario y props).
- * Version: 0.1.0
- * Requires PHP: 7.3
- * Text Domain: casa-a-catalogo
+ * Catálogo de productos y categorías (integrado en CASA A Panel).
  *
- * @package CASA_A_Catalogo
+ * @package JWT_Gallery
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -150,7 +146,6 @@ add_action( 'init', 'casa_a_catalogo_register_meta_ficha' );
  * Taxonomías de la ficha de producto que usan los filtros del catálogo: estilo, color y material.
  */
 
-add_action( 'init', 'casa_a_catalogo_register_taxonomias' );
 
 /**
  * Sanitiza el estado de stock: '1' disponible, '0' sin stock.
@@ -164,7 +159,6 @@ add_action( 'init', 'casa_a_catalogo_register_taxonomias' );
  * Metadatos de la ficha de arriendo: código, precio por día y stock.
  */
 
-add_action( 'init', 'casa_a_catalogo_register_meta_ficha' );
 
 /**
  * Metadatos del producto: dimensiones y tipo de disponibilidad.
@@ -299,7 +293,6 @@ function casa_a_catalogo_activate() {
 	casa_a_catalogo_register();
 	flush_rewrite_rules();
 }
-register_activation_hook( __FILE__, 'casa_a_catalogo_activate' );
 
 
 /**
@@ -308,7 +301,6 @@ register_activation_hook( __FILE__, 'casa_a_catalogo_activate' );
 function casa_a_catalogo_deactivate() {
 	flush_rewrite_rules();
 }
-register_deactivation_hook( __FILE__, 'casa_a_catalogo_deactivate' );
 
 /**
  * Cuadro "Ficha de arriendo" en el editor de producto: código, precio por día y stock.
@@ -387,7 +379,6 @@ add_action( 'save_post_' . CASA_A_CATALOGO_POST_TYPE, 'casa_a_catalogo_guardar_f
  * Cuadro "Ficha de arriendo" en el editor de producto: código, precio por día y stock.
  */
 
-add_action( 'add_meta_boxes', 'casa_a_catalogo_add_ficha_box' );
 
 /**
  * Muestra los campos de la ficha de arriendo.
@@ -402,8 +393,4 @@ add_action( 'add_meta_boxes', 'casa_a_catalogo_add_ficha_box' );
  * @param int $post_id ID del producto.
  */
 
-add_action( 'save_post_' . CASA_A_CATALOGO_POST_TYPE, 'casa_a_catalogo_guardar_ficha' );
 
-require_once __DIR__ . '/includes/sync-galeria.php';
-require_once __DIR__ . '/includes/espejo-categorias.php';
-require_once __DIR__ . '/includes/producto-extra.php';

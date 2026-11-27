@@ -28,7 +28,6 @@ function casa_a_espejo_buscar( $nombre, $padre ) {
 		array(
 			'taxonomy'   => 'categoria_producto',
 			'hide_empty' => false,
-			'parent'     => (int) $padre,
 		)
 	);
 
@@ -37,6 +36,11 @@ function casa_a_espejo_buscar( $nombre, $padre ) {
 	}
 
 	foreach ( $terms as $term ) {
+		// Coincidencia exacta de padre: una principal nunca toma una subcategoría con el mismo nombre.
+		if ( (int) $term->parent !== (int) $padre ) {
+			continue;
+		}
+
 		if ( strtolower( wp_specialchars_decode( $term->name, ENT_QUOTES ) ) === $nombre ) {
 			return (int) $term->term_id;
 		}
@@ -151,7 +155,21 @@ function casa_a_categorias_del_plugin() {
 		)
 	);
 
-	return is_wp_error( $terms ) ? array() : $terms;
+	if ( is_wp_error( $terms ) ) {
+		return array();
+	}
+
+	// Solo se muestran copias cuya categoría de galería todavía existe (una borrada en el panel no aparece).
+	return array_values(
+		array_filter(
+			$terms,
+			function ( $termino ) {
+				$origen = (int) get_term_meta( $termino->term_id, '_casa_a_origen', true );
+
+				return $origen && get_term( $origen, CASA_A_GALERIA_TAXONOMY ) instanceof WP_Term;
+			}
+		)
+	);
 }
 
 add_action( 'created_' . CASA_A_GALERIA_TAXONOMY, 'casa_a_espejo_sincronizar_todo' );

@@ -51,9 +51,13 @@ if ( ! function_exists( 'casa_a_filtro_categorias_agrupadas' ) ) {
 				}
 			);
 
-			// Sin subcategorías, la principal es el único filtro del grupo.
+			// Sin subcategorías, la principal se muestra una sola vez como filtro (no como subcategoría).
 			if ( empty( $items ) ) {
-				$items = array( $principal );
+				$clase_principal = casa_a_catalogo_filtro_activo( 'categoria', $principal->slug ) ? ' is-active' : '';
+				echo '<section class="casa-a-filtro-grupo">';
+				echo '<h2 class="casa-a-filtro-titulo"><a class="casa-a-chip' . esc_attr( $clase_principal ) . '" href="' . esc_url( casa_a_catalogo_url_filtro( 'categoria', $principal->slug ) ) . '">' . esc_html( wp_specialchars_decode( $principal->name, ENT_QUOTES ) ) . '</a></h2>';
+				echo '</section>';
+				continue;
 			}
 
 			$abre = false;
@@ -86,7 +90,6 @@ get_header();
 
 $casa_a_es_busqueda = is_search();
 $casa_a_termino     = (string) get_query_var( 'casa_a_busqueda' ) ? get_query_var( 'casa_a_busqueda' ) : get_search_query();
-$casa_a_termino     = (string) get_query_var( 'casa_a_busqueda' ) ? get_query_var( 'casa_a_busqueda' ) : get_search_query();
 $casa_a_total       = (int) $GLOBALS['wp_query']->found_posts;
 
 $casa_a_grupos = array(
@@ -102,7 +105,6 @@ $casa_a_grupos = array(
 		<header class="casa-a-catalogo-cabecera">
 			<div>
 				<?php if ( $casa_a_es_busqueda ) : ?>
-					<h1 class="casa-a-catalogo-titulo"><?php echo esc_html( sprintf( __( 'Resultados para «%s»', 'casa-a' ), $casa_a_termino ) ); ?></h1>
 					<h1 class="casa-a-catalogo-titulo"><?php echo esc_html( sprintf( __( 'Resultados para «%s»', 'casa-a' ), $casa_a_termino ) ); ?></h1>
 				<?php else : ?>
 				<?php endif; ?>
